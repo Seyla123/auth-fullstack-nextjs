@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
 
 
-function Signup() {
+function Signin() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { toast } = useToast()
   const {
@@ -25,12 +25,12 @@ function Signup() {
     setIsLoading(true);
     try {
       // Call the API route to sign up the user
-      const response = await fetch('/api/auth/sign-up', {
+      const response = await fetch('/api/auth/sign-in', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
+      
       // Check if the response is not OK
       if (!response.ok) {
         const errorData = await response.json(); // Try to parse error details if available
@@ -58,7 +58,7 @@ function Signup() {
     <main className='flex  min-h-screen items-center justify-center'>
       <section className='shadow-lg py-6 px-4 rounded max-w-sm w-full'>
         <h1 className='text-3xl text-center font-bold mb-4'>
-          Join Us
+          Sign In
         </h1>
         <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4'>
           <div className='grid w-full  items-center gap-1.5'>
@@ -114,11 +114,11 @@ function Signup() {
             )} */}
 
           </div>
-          <Button disabled={isLoading} type='submit' className='bg-dark-4'>Sign up</Button>
+          <Button disabled={isLoading} type='submit' className='bg-dark-4'>Sign in</Button>
         </form>
       </section>
     </main>
   )
 }
 
-export default Signup
+export default Signin

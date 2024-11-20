@@ -18,5 +18,4 @@ export async function signup(state: FormState, formData: FormData) {
   const { name, email, password } = validatedFields.data
   console.log('this field : ', name, email, password);
   
-  // Call the provider or db to create a user...
 }
