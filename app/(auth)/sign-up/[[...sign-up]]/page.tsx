@@ -7,11 +7,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SignupFormSchema, SignupFormValues } from '@/lib/definitions'
 import { useState } from 'react'
+import { useToast } from '@/hooks/use-toast'
 
 
 function Page() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const { toast } = useToast()
   const {
     register,
     handleSubmit,
@@ -20,21 +21,37 @@ function Page() {
     resolver: zodResolver(SignupFormSchema),
   });
 
-  const onSubmit= async (data: SignupFormValues) => {
+  const onSubmit = async (data: SignupFormValues) => {
     setIsLoading(true);
     try {
       // Call the API route to sign up the user
-      await fetch('/api/auth/sign-up', {
+      const response = await fetch('/api/auth/sign-up', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
+      // Check if the response is not OK
+      if (!response.ok) {
+        const errorData = await response.json(); // Try to parse error details if available
+        throw new Error(errorData.message || 'Failed to sign up');
+      }
+      toast({
+        title: 'Success',
+        description: 'You have been successfully signed up!',
+      })
     } catch (error) {
       console.log('this is an error :  ' + error);
-    }finally{
+      toast({
+        title: 'Error',
+        description: (error as unknown as { message: string }).message,
+        variant: 'destructive',
+      })
+    } finally {
       setIsLoading(false)
     }
   }
+
+
   return (
 
     <main className='flex  min-h-screen items-center justify-center'>
