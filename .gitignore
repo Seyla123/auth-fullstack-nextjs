@@ -12,7 +12,8 @@
 
 # testing
 /coverage
-
+*.sqlite
+*.sqlite3
 *.sqlite
 # next.js
 /.next/
