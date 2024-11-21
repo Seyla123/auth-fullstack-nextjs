@@ -5,6 +5,7 @@ import { User } from '@/app/api/auth/sign-in/route';
 // Make sure you have the appropriate types defined elsewhere for DefaultResponse and BaseError
 interface DefaultResponse {
   message: string;
+  data?:User
   // You can add other properties as needed
 }
 
@@ -30,6 +31,14 @@ export const authApi = baseApi.injectEndpoints({
         credentials: 'include', // Includes cookies for authentication
       }),
     }),
+
+    checkAuth: builder.query<DefaultResponse, void>({
+      query: () => ({
+        url: '/auth/me', 
+        method: 'GET',
+        credentials: 'include',
+      }),
+    })
   }),
   overrideExisting: false, // Set to true if you want to override existing endpoints
 });
@@ -37,4 +46,5 @@ export const authApi = baseApi.injectEndpoints({
 export const {
   useSignupMutation,
   useLoginMutation,
+  useCheckAuthQuery
 } = authApi;
