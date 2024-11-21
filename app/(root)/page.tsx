@@ -59,7 +59,7 @@ export default function Home() {
   }
   return (
     <main className="max-w-screen-2xl mx-auto py-6 flex flex-col gap-2 px-4">
-      <h2>Welcome to the Home Page</h2>
+      <h2>Hi Seyla Seav, Welcome to the Home</h2>
       <div className="flex flex-row items-center justify-between gap-2">
         <Input
           placeholder="search"
@@ -83,7 +83,7 @@ export default function Home() {
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Active</TableHead>
-              <TableHead className="w-1" colSpan={2} />
+              <TableHead className="w-1"  />
             </TableRow>
           </TableHeader>
           <TableBody>

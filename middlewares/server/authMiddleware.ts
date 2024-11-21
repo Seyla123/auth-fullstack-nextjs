@@ -32,12 +32,16 @@ export const protect = (req: NextRequest) => {
   if (!currentUser) throw new Error('The user belonging to this token no longer exists.')
 
   req.headers.set("user", JSON.stringify(currentUser));
+
 };
 
-export const restrict = (req: NextRequest, roles: 'admin' | 'user') => {
+export const restrict = (req: NextRequest, roles: 'admin' | 'user' | ['admin', 'user']) => {
   const user = JSON.parse(req.headers.get('user')!);
   console.log('this restricted role : ', user.role);
-  if (!roles.includes(user.role)) {
+  // Check if the user has the required role to access the route
+  const rolesArray = Array.isArray(roles) ? roles : [roles];
+  if (!rolesArray.includes(user.role)) {
     throw new Error('You do not have permission to access this route');
   }
+  req.headers.set('userId', user.id);
 }
