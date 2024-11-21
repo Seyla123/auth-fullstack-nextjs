@@ -6,8 +6,10 @@ import { SignupFormSchema } from "@/lib/definitions";
 import bcrypt from "bcryptjs";
 import { signToken } from "@/lib/server/utils/authUtils";
 
+
 export async function POST(req: NextRequest) {
   try {
+
     // read the request body
     const data = await req.json();
 

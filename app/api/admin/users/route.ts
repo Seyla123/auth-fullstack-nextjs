@@ -1,10 +1,13 @@
 "use server";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/initDb";
+import { protect } from "@/middlewares/server/authMiddleware";
 
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
+        const response = protect(req);
+        if (response) return response;
         // insert the user into the database
         const stmt = db.prepare("SELECT name, email ,id from users ");
         const users = stmt.all();

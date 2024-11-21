@@ -10,30 +10,21 @@ import { Plus } from "lucide-react";
 import { DropdownAction } from "@/components/DropdownAction";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
-
-
+import { useGetAllUsersQuery } from "@/lib/client/services/admin/userService";
 
 export default function Home() {
   const [usersData, setUsersData] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const {data: users, isSuccess} = useGetAllUsersQuery();
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   useEffect(() => {
-    const fetchUsers = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/admin/users");
-        const { data } = await response.json();
-        setUsersData(data);
-      } catch (error) {
-        console.log("Error fetching users:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if(users && isSuccess ){
+      setUsersData(users?.data);
+    }
+  }, [users])
 
-    fetchUsers()
-  }, [setUsersData])
+  console.log('this is data from service : ', users);
+
 
   //function to delete one user
   const deleteUser = async (id: string | number) => {
@@ -69,9 +60,9 @@ export default function Home() {
     </main>
   }
   return (
-    <main className="max-w-screen-2xl mx-auto py-6 flex flex-col gap-2">
+    <main className="max-w-screen-2xl mx-auto py-6 flex flex-col gap-2 px-4">
       <h2>Welcome to the Home Page</h2>
-      <div className="flex flex-row items-center justify-between">
+      <div className="flex flex-row items-center justify-between gap-2">
         <Input
           placeholder="search"
           className="max-w-sm  focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -89,9 +80,10 @@ export default function Home() {
               <TableHead className="w-1">
                 <Checkbox />
               </TableHead>
+              <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead className="w-1/12">Action</TableHead>
+              <TableHead className="w-1" colSpan={2} />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -114,7 +106,7 @@ export default function Home() {
                     <TableCell>{user.id}</TableCell>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
-                    <TableCell>
+                    <TableCell >
                       <DropdownAction
                         handleEdit={() => console.log(`edit ${user.name}`)}
                         handleDelete={() => deleteUser(user.id)}

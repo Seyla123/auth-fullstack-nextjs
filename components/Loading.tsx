@@ -1,4 +1,4 @@
-function Loading({ noTitle = false, title = 'Loading' }: { noTitle?: boolean, title?: string }) {
+function Loading({ noTitle = false, title = 'Loading...' }: { noTitle?: boolean, title?: string }) {
     return (
         <div className="flex items-center justify-center">
             <svg className="h-5 w-5 mr-4  text-gray-300 animate-spin" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"

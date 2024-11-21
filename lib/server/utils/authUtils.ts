@@ -23,7 +23,7 @@ const createSendToken = async (
                 httpOnly: true,
                 secure: isProduction ? req.headers.get('x-forwarded-proto') === 'https' : false,
                 sameSite: 'strict',
-                maxAge: 1
+                maxAge: Number(process.env.JWT_COOKIE_EXPIRES_IN) * 1000
             }
         );
 

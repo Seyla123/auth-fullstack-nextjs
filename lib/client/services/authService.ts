@@ -1,5 +1,4 @@
-import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { baseApi } from './baseApi';
+import { baseApi } from '@/lib/client/services/baseApi';
 import { SignupFormValues } from '@/lib/definitions';
 import { User } from '@/app/api/auth/sign-in/route';
 
@@ -7,11 +6,6 @@ import { User } from '@/app/api/auth/sign-in/route';
 interface DefaultResponse {
   message: string;
   // You can add other properties as needed
-}
-
-interface BaseError {
-  status: number;
-  message: string;
 }
 
 export const authApi = baseApi.injectEndpoints({
