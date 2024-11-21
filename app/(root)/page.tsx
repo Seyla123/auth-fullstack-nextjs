@@ -83,7 +83,6 @@ export default function Home() {
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Active</TableHead>
-              <TableHead>IsVerify</TableHead>
               <TableHead className="w-1" colSpan={2} />
             </TableRow>
           </TableHeader>
@@ -109,7 +108,6 @@ export default function Home() {
                     <TableCell>{user?.email}</TableCell>
                     <TableCell>{user?.role}</TableCell>
                     <TableCell>{user?.active}</TableCell>
-                    <TableCell>{user?.emailVerified}</TableCell>
                     <TableCell >
                       <DropdownAction
                         handleEdit={() => console.log(`edit ${user?.username}`)}

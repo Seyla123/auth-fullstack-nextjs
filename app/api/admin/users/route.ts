@@ -1,13 +1,13 @@
 "use server";
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/initDb";
-import { protect } from "@/middlewares/server/authMiddleware";
+import { protect, restrict } from "@/middlewares/server/authMiddleware";
 
 
 export async function GET(req: NextRequest) {
     try {
-        const response = protect(req);
-        if (response) return response;
+        protect(req);
+        restrict(req, 'admin')
         // insert the user into the database
         const stmt = db.prepare("SELECT id, username ,email ,role,active, emailVerified from users ");
         const users = stmt.all();

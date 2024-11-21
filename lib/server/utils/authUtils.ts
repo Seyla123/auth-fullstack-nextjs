@@ -33,6 +33,8 @@ const createSendToken = async (
             data: {
                 id: user.id,
                 username: user.username,
+                role: user.role,
+                emailVerified: user.emailVerified,
                 email: user.email,
             },
             message: "User signed in successfully",
