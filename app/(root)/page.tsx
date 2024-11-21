@@ -14,8 +14,7 @@ import { useGetAllUsersQuery } from "@/lib/client/services/admin/userService";
 
 export default function Home() {
   const [usersData, setUsersData] = useState<User[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const {data: users, isSuccess} = useGetAllUsersQuery();
+  const {data: users, isSuccess, isLoading} = useGetAllUsersQuery();
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   useEffect(() => {
     if(users && isSuccess ){
@@ -40,13 +39,12 @@ export default function Home() {
         title: "Success",
         description: "User deleted successfully",
       })
-    } catch (error) {
+    } catch (error : any) {
       toast({
         title: 'Error',
-        description: (error as unknown as { message: string }).message || 'Fail to delete user',
+        description: error.message || 'Fail to delete user',
         variant: 'destructive',
       })
-      console.log("Error deleting user:", error);
     }
   };
 
@@ -81,8 +79,11 @@ export default function Home() {
                 <Checkbox />
               </TableHead>
               <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
+              <TableHead>Username</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Active</TableHead>
+              <TableHead>IsVerify</TableHead>
               <TableHead className="w-1" colSpan={2} />
             </TableRow>
           </TableHeader>
@@ -98,18 +99,21 @@ export default function Home() {
               </TableRow>
               :
               (!isLoading && usersData.length > 0) ?
-                usersData.map((user: User, index: number) => (
+                usersData.map((user, index: number) => (
                   <TableRow key={index}>
                     <TableCell >
                       <Checkbox />
                     </TableCell>
-                    <TableCell>{user.id}</TableCell>
-                    <TableCell>{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user?.id}</TableCell>
+                    <TableCell>{user?.username}</TableCell>
+                    <TableCell>{user?.email}</TableCell>
+                    <TableCell>{user?.role}</TableCell>
+                    <TableCell>{user?.active}</TableCell>
+                    <TableCell>{user?.emailVerified}</TableCell>
                     <TableCell >
                       <DropdownAction
-                        handleEdit={() => console.log(`edit ${user.name}`)}
-                        handleDelete={() => deleteUser(user.id)}
+                        handleEdit={() => console.log(`edit ${user?.username}`)}
+                        handleDelete={() => deleteUser(user?.id)}
                         handleView={() => console.log("view")}
                       />
                     </TableCell>

@@ -32,7 +32,7 @@ const createSendToken = async (
             token,
             data: {
                 id: user.id,
-                name: user.name,
+                username: user.username,
                 email: user.email,
             },
             message: "User signed in successfully",

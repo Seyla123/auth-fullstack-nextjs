@@ -4,7 +4,6 @@ import { db } from "@/lib/initDb";
 import { z } from "zod";
 import { SignupFormSchema } from "@/lib/definitions";
 import bcrypt from "bcryptjs";
-import { signToken } from "@/lib/server/utils/authUtils";
 
 
 export async function POST(req: NextRequest) {
@@ -15,27 +14,24 @@ export async function POST(req: NextRequest) {
 
     // validate the request body and extract the data
     const validatedData = SignupFormSchema.parse(data);
-    const { name, email, password } = validatedData;
+    const { username, email, password } = validatedData;
 
     // hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // insert the user into the database
     const stmt = db.prepare(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)"
+      "INSERT INTO users (username , email, password) VALUES (?, ?, ?)"
     );
-    stmt.run(name, email, hashedPassword);
+    stmt.run(username,email, hashedPassword);
 
     // get the created data user
     const user = db.prepare("SELECT * FROM users WHERE email = ? ");
     const users = user.get(email);
 
-    const token = signToken(1023492349);
-
-
     // return the newly created user and all users
     return NextResponse.json(
-      { message: "Data received successfully", data: users, token },
+      { message: "Data received successfully", data: users },
       { status: 201 }
     );
   } catch (error) {

@@ -13,7 +13,7 @@ import Loading from '@/components/Loading'
 
 function Signup() {
   const { toast } = useToast()
-  const [signup, { isLoading, isError, error }] = useSignupMutation()
+  const [signup, { isLoading }] = useSignupMutation()
   const {
     register,
     handleSubmit,
@@ -30,11 +30,11 @@ function Signup() {
         title: 'Success',
         description: 'You have been successfully signed up!',
       });
-    } catch (error) {
+    } catch (error: any) {
       // Handle the error case
       toast({
         title: 'Error',
-        description: (error as any).data?.message || 'An unknown error occurred.',
+        description: error?.data?.message || 'An unknown error occurred.',
         variant: 'destructive',
       });
     }
@@ -48,16 +48,16 @@ function Signup() {
         </h1>
         <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4'>
           <div className='grid w-full items-center gap-1.5'>
-            <Label htmlFor='name'>
+            <Label htmlFor='username'>
               Name
             </Label>
             <Input
-              placeholder='name'
+              placeholder='username'
               type='text'
-              {...register('name')}
-              className={cn('focus-visible:ring-0 focus-visible:ring-offset-0', { 'border-red-500': errors?.name })}
+              {...register('username')}
+              className={cn('focus-visible:ring-0 focus-visible:ring-offset-0', { 'border-red-500': errors?.username })}
             />
-            {errors.name && <span className="text-red-500 text-[12px]">{String(errors?.name?.message)}</span>}
+            {errors.username && <span className="text-red-500 text-[12px]">{String(errors?.username?.message)}</span>}
           </div>
 
           <div className='grid w-full items-center gap-1.5'>

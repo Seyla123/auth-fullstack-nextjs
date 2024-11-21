@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
         const response = protect(req);
         if (response) return response;
         // insert the user into the database
-        const stmt = db.prepare("SELECT name, email ,id from users ");
+        const stmt = db.prepare("SELECT id, username ,email ,role,active, emailVerified from users ");
         const users = stmt.all();
 
         // return the newly created user and all users

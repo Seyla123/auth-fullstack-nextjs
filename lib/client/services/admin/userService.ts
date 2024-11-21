@@ -11,7 +11,7 @@ interface DefaultResponse {
 export const userApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         // Signup mutation
-        getAllUsers: builder.query<DefaultResponse, User>({
+        getAllUsers: builder.query<DefaultResponse, void>({
             query: () => ({
                 url: '/admin/users', // Adjust the path as needed
                 method: 'GET',

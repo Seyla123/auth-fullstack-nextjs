@@ -30,7 +30,7 @@ function Signin() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      
+
       // Check if the response is not OK
       if (!response.ok) {
         const errorData = await response.json(); // Try to parse error details if available
@@ -40,11 +40,10 @@ function Signin() {
         title: 'Success',
         description: 'You have been successfully signed up!',
       })
-    } catch (error) {
-      console.log('this is an error :  ' + error);
+    } catch (error : any) {
       toast({
         title: 'Error',
-        description: (error as unknown as { message: string }).message,
+        description: error.message,
         variant: 'destructive',
       })
     } finally {
@@ -62,17 +61,17 @@ function Signin() {
         </h1>
         <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4'>
           <div className='grid w-full  items-center gap-1.5'>
-            <Label htmlFor='name'>
+            <Label htmlFor='username'>
               Name
             </Label>
             <Input
-              placeholder='name'
+              placeholder='username'
               type='text'
-              {...register('name')}
-              className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.name })}
+              {...register('username')}
+              className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.username })}
 
             />
-            {errors.name && <span className="text-red-500 text-[12px]">{String(errors?.name?.message)}</span>}
+            {errors.username && <span className="text-red-500 text-[12px]">{String(errors?.username?.message)}</span>}
 
           </div>
           <div className='grid w-full  items-center gap-1.5'>
