@@ -1,5 +1,5 @@
 "use server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/initDb";
 
 export async function GET() {
@@ -27,3 +27,4 @@ export async function GET() {
         );
     }
 }
+

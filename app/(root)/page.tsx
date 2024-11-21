@@ -5,10 +5,18 @@ import { User } from "../api/auth/sign-in/route";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
 import Loading from "@/components/Loading";
+import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
+import { DropdownAction } from "@/components/DropdownAction";
+import { Checkbox } from "@/components/ui/checkbox";
+
+
 
 export default function Home() {
   const [usersData, setUsersData] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [checkedItems, setCheckedItems] = useState<string[]>([]);
   useEffect(() => {
     const fetchUsers = async () => {
       setIsLoading(true);
@@ -28,6 +36,7 @@ export default function Home() {
 
   console.log(usersData);
 
+  console.log('this is current checked selected : ', checkedItems);
 
   if (isLoading) {
     return <main className="w-full flex justify-center h-screen">
@@ -35,23 +44,33 @@ export default function Home() {
     </main>
   }
   return (
-    <main className="max-w-screen-lg mx-auto py-6">
+    <main className="max-w-screen-2xl mx-auto py-6 flex flex-col gap-2">
       <h2>Welcome to the Home Page</h2>
-      <Link href="/sign-up">
-        <Button variant="destructive">Add User</Button>
-      </Link>
+      <div className="flex flex-row items-center justify-between">
+        <Input
+          placeholder="search"
+          className="max-w-sm  focus-visible:ring-0 focus-visible:ring-offset-0"
+        />
+        <Link href="/sign-up">
+          <Button className="bg-dark-4">
+            Add User <Plus />
+          </Button>
+        </Link>
+      </div>
       <section className="rounded-md border">
-
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-1">
+                <Checkbox />
+              </TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Action</TableHead>
+              <TableHead className="w-1/12">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {!isLoading ?
+            {isLoading ?
               <TableRow >
                 <TableCell
                   colSpan={3}
@@ -61,14 +80,20 @@ export default function Home() {
                 </TableCell>
               </TableRow>
               :
-              (isLoading && usersData.length > 0) ?
+              (!isLoading && usersData.length > 0) ?
                 usersData.map((user: User, index: number) => (
                   <TableRow key={index}>
+                    <TableCell >
+                      <Checkbox />
+                    </TableCell>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
-                      <Button variant="outline">Update</Button>
-                      <Button variant="destructive">Delete</Button>
+                      <DropdownAction
+                        handleEdit={() => console.log(`edit ${user.name}`)}
+                        handleDelete={() => console.log("delete")}
+                        handleView={() => console.log("view")}
+                      />
                     </TableCell>
                   </TableRow>
                 ))
