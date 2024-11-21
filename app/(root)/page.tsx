@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { DropdownAction } from "@/components/DropdownAction";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "@/hooks/use-toast";
 
 
 
@@ -32,7 +33,31 @@ export default function Home() {
     };
 
     fetchUsers()
-  }, [])
+  }, [setUsersData])
+
+  //function to delete one user
+  const deleteUser = async (id: string | number) => {
+    try {
+      const response = await fetch(`/api/admin/users/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+      setUsersData(usersData.filter(user => user.id !== id));
+      toast({
+        title: "Success",
+        description: "User deleted successfully",
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: (error as unknown as { message: string }).message || 'Fail to delete user',
+        variant: 'destructive',
+      })
+      console.log("Error deleting user:", error);
+    }
+  };
 
   console.log(usersData);
 
@@ -86,12 +111,13 @@ export default function Home() {
                     <TableCell >
                       <Checkbox />
                     </TableCell>
+                    <TableCell>{user.id}</TableCell>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
                       <DropdownAction
                         handleEdit={() => console.log(`edit ${user.name}`)}
-                        handleDelete={() => console.log("delete")}
+                        handleDelete={() => deleteUser(user.id)}
                         handleView={() => console.log("view")}
                       />
                     </TableCell>

@@ -5,11 +5,9 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import { Ellipsis } from "lucide-react";
-export const DropdownAction: React.FC<{
-    handleEdit: () => void;
-    handleView: () => void;
-    handleDelete: () => void;
-}> = ({ handleEdit, handleView, handleDelete }) => {
+
+
+export const DropdownAction = ({ handleEdit, handleView, handleDelete }) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>

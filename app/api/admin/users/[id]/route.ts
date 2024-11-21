@@ -1,12 +1,12 @@
+
 import { db } from "@/lib/initDb";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 // Delete user helper function
-const deleteUser = async (email: string): Promise<boolean> => {
+const deleteUser = async (id: string): Promise<boolean> => {
     try {
-        const stmt = db.prepare("DELETE FROM users WHERE email = ?");
-        const result = stmt.run(email);
-
+        const stmt = db.prepare("DELETE FROM users WHERE id = ?");
+        const result = stmt.run(id);
         // Assuming `result.changes` indicates the number of rows affected
         return result.changes > 0;
     } catch (error) {
@@ -15,26 +15,53 @@ const deleteUser = async (email: string): Promise<boolean> => {
     }
 };
 export async function DELETE(
-    { params }: { params: { id: string } }
+    req: NextRequest, { params }: { params: { id: string } }
 ) {
     try {
-        const { id } = params;
+        const id = await params.id;
         const isDeleted = await deleteUser(id);
         if (isDeleted) {
             return NextResponse.json({
                 status: "success",
-                message: "User deleted successfully",
+                message: `User ID ${id} deleted successfully`,
             })
         } else {
             return NextResponse.json({
                 status: "error",
-                message: "User not found",
-            })
+                message: `User ID ${id} not found `,
+            }, { status: 404 })
         }
     } catch (error: any) {
         return NextResponse.json({
             status: "error",
             message: error.message || "Database error while deleting user",
-        }, { status: 500 })
+        }, { status: 500 });
+    }
+}
+
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+    try {
+        const { id } = await params;
+
+        const stmt = db.prepare("SELECT * FROM users WHERE id =?");
+        const user = stmt.get(id);
+
+        if (user) {
+            return NextResponse.json({
+                status: "success",
+                message: "User found",
+                data: user,
+            }, { status: 200 });
+        } else {
+            return NextResponse.json({
+                status: "error",
+                message: "User not found",
+            }, { status: 404 });
+        }
+    } catch (error: any) {
+        return NextResponse.json({
+            status: "error",
+            message: error.message || "Database error while deleting user",
+        }, { status: 500 });
     }
 }

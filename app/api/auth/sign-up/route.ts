@@ -39,18 +39,17 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     // Type the error as an instance of Error
     if (error instanceof Error) {
-      console.error("SQLite Error:", error.message);
       if (error instanceof z.ZodError) {
         return NextResponse.json(
           { errors: error.issues[0].message },
-          { status: 400 }
+          { status: 2001 }
         );
       }
       // Handle SQLite-specific errors (e.g., constraint violations)
       if (error.message.includes("UNIQUE constraint failed")) {
         return NextResponse.json(
           { message: "A user with this email already exists" },
-          { status: 400 } // Bad Request
+          { status: 201 } // Bad Request
         );
       }
     }

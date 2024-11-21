@@ -1,11 +1,12 @@
 "use server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/initDb";
+
 
 export async function GET() {
     try {
         // insert the user into the database
-        const stmt = db.prepare("SELECT name, email from users ");
+        const stmt = db.prepare("SELECT name, email ,id from users ");
         const users = stmt.all();
 
         // return the newly created user and all users
@@ -15,11 +16,10 @@ export async function GET() {
                 message: "Fetching successfully",
                 total: users.length,
                 data: users,
-
             },
             { status: 200 }
         );
-    } catch (error) {
+    } catch (error: any) {
         // Default error response for unexpected errors
         return NextResponse.json(
             { message: error.message || "An error occurred while creating the user" },
