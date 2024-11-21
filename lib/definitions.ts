@@ -1,11 +1,16 @@
 import { z } from 'zod'
- 
+
 export const SignupFormSchema = z.object({
   name: z
     .string()
     .min(2, { message: 'Name must be at least 2 characters long.' })
-    .trim(),
-  email: z.string().email({ message: 'Please enter a valid email.' }).trim(),
+    .trim()
+    .refine(value => !!value, { message: 'Name is required.' }),
+  email: z
+    .string()
+    .email({ message: 'Please enter a valid email.' })
+    .trim()
+    .refine(value => !!value, { message: 'Email is required.' }),
   password: z
     .string()
     .min(8, { message: 'Be at least 8 characters long' })
@@ -14,8 +19,10 @@ export const SignupFormSchema = z.object({
     .regex(/[^a-zA-Z0-9]/, {
       message: 'Contain at least one special character.',
     })
-    .trim(),
+    .trim()
+    .refine(value => !!value, { message: 'Password is required.' }),
 })
+
 export type SignupFormValues = z.infer<typeof SignupFormSchema>;
 export type FormState =
   | {

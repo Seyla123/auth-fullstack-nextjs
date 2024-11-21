@@ -3,8 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/initDb";
 import { z } from "zod";
 import { SignupFormSchema } from "@/lib/definitions";
-import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
+import { signToken } from "@/lib/server/utils/authUtils";
+
 export async function POST(req: NextRequest) {
   try {
     // read the request body
@@ -27,9 +28,12 @@ export async function POST(req: NextRequest) {
     const user = db.prepare("SELECT * FROM users WHERE email = ? ");
     const users = user.get(email);
 
+    const token = signToken(1023492349);
+
+
     // return the newly created user and all users
     return NextResponse.json(
-      { message: "Data received successfully", data: users },
+      { message: "Data received successfully", data: users, token },
       { status: 201 }
     );
   } catch (error) {
