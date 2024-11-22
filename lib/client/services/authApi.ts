@@ -5,8 +5,13 @@ import { User } from '@/app/api/auth/sign-in/route';
 // Make sure you have the appropriate types defined elsewhere for DefaultResponse and BaseError
 interface DefaultResponse {
   message: string;
-  data?:User | null;
+  data?: User | null;
   // You can add other properties as needed
+}
+
+interface SignoutResponse {
+  message: string,
+  status: string
 }
 
 export const authApi = baseApi.injectEndpoints({
@@ -32,9 +37,19 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
+    // Login mutation
+    signout: builder.mutation<SignoutResponse, void>({
+      query: () => ({
+        url: '/auth/sign-out', // Adjust the path as needed
+        method: 'POST',
+        credentials: 'include', // Includes cookies for authentication
+      }),
+      invalidatesTags: ['Auth'], // Tags for caching and invalidation
+    }),
+
     checkAuth: builder.query<DefaultResponse, void>({
       query: () => ({
-        url: '/auth/me', 
+        url: '/auth/me',
         method: 'GET',
         credentials: 'include',
       }),
@@ -46,5 +61,6 @@ export const authApi = baseApi.injectEndpoints({
 export const {
   useSignupMutation,
   useSigninMutation,
+  useSignoutMutation,
   useCheckAuthQuery
 } = authApi;

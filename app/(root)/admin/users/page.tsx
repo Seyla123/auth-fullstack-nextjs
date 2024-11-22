@@ -26,13 +26,13 @@ export default function Home() {
     if (users && isSuccess) {
       setUsersData(users?.data);
     }
-  }, [users])
+  }, [users, isSuccess])
 
   //console.log('this is data from service : ', users);
 
 
   //function to delete one user
-  const deleteUser = async (id: string | number) => {
+  const deleteUser = async (id: string) => {
     try {
       const response = await fetch(`/api/admin/users/${id}`, {
         method: "DELETE",
@@ -58,6 +58,45 @@ export default function Home() {
 
   //console.log('this is current checked selected : ', checkedItems);
 
+  const isSelected = (id: string | number) => checkedItems.indexOf(id) !== -1;
+  const handleCheckboxClick = (event: { stopPropagation: () => void; }, id: any) => {
+    event.stopPropagation();
+    const selectedIndex = checkedItems.indexOf(id);
+    console.log('this is selected', selectedIndex);
+
+    let newSelected: any[] | ((prevState: string[]) => string[]) = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(checkedItems, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(checkedItems.slice(1));
+    } else if (selectedIndex === checkedItems.length - 1) {
+      newSelected = checkedItems.concat(checkedItems.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      // newSelected = checkedItems.filter((_, index) => index !== selectedIndex);
+      newSelected = checkedItems.concat(
+        checkedItems.slice(0, selectedIndex),
+        checkedItems.slice(selectedIndex + 1),
+      );
+      console.log('selectied ' + newSelected);
+    }
+    console.log('selection changed to ' + newSelected);
+
+    setCheckedItems(newSelected);
+
+  };
+  const handleSelectAllClick = (event) => {
+    console.log('selected : ', checkedItems, event.target.getAttribute('aria-checked'));
+  
+    if (Boolean(event.target.getAttribute('aria-checked'))) {
+      const newSelecteds = usersData.map((user) => user?.id);
+      setCheckedItems(newSelecteds);
+      console.log('selected : ', newSelecteds);
+      
+    } else {
+      setCheckedItems([]);
+    }
+  };
   return (
     <main className=" py-6 flex flex-col gap-2 px-4">
       <h2>Hi {userAuth?.username}, Welcome to the Home</h2>
@@ -73,11 +112,13 @@ export default function Home() {
         </Link>
       </div>
       <section className="rounded-md border">
-        <Table>
+        <Table >
           <TableHeader>
             <TableRow>
               <TableHead className="w-1">
-                <Checkbox />
+                <Checkbox
+                  checked={usersData.length > 0 && checkedItems.length === usersData.length}
+                  onClick={(event)=> handleSelectAllClick(event)} />
               </TableHead>
               <TableHead>ID</TableHead>
               <TableHead>Username</TableHead>
@@ -99,25 +140,28 @@ export default function Home() {
               </TableRow>
               :
               (!isLoading && usersData.length > 0) ?
-                usersData.map((user, index: number) => (
-                  <TableRow key={index}>
-                    <TableCell >
-                      <Checkbox />
-                    </TableCell>
-                    <TableCell>{user?.id}</TableCell>
-                    <TableCell>{user?.username}</TableCell>
-                    <TableCell>{user?.email}</TableCell>
-                    <TableCell>{user?.role}</TableCell>
-                    <TableCell>{user?.active}</TableCell>
-                    <TableCell >
-                      <DropdownAction
-                        handleEdit={() => console.log(`edit ${user?.username}`)}
-                        handleDelete={() => deleteUser(user?.id)}
-                        handleView={() => console.log("view")}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))
+                usersData.map((user, index: number) => {
+                  const selected = isSelected(String(user?.id))
+                  return (
+                    <TableRow key={index} >
+                      <TableCell >
+                        <Checkbox checked={selected} onClick={(event) => handleCheckboxClick(event, String(user?.id))} />
+                      </TableCell>
+                      <TableCell>{user?.id}</TableCell>
+                      <TableCell>{user?.username}</TableCell>
+                      <TableCell>{user?.email}</TableCell>
+                      <TableCell>{user?.role}</TableCell>
+                      <TableCell>{user?.active}</TableCell>
+                      <TableCell >
+                        <DropdownAction
+                          handleEdit={() => console.log(`edit ${user?.username}`)}
+                          handleDelete={() => deleteUser(user?.id)}
+                          handleView={() => console.log(`view ${user?.id}`)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
                 :
                 <TableRow>
                   <TableCell
@@ -134,3 +178,4 @@ export default function Home() {
     </main>
   );
 }
+

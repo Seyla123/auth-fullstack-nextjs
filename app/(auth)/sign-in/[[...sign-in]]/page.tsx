@@ -9,6 +9,7 @@ import { SigninFormSchema, SigninFormValues } from '@/lib/definitions'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import { useSigninMutation } from '@/lib/client/services/authApi'
+import Loading from '@/components/Loading'
 
 
 function Signin() {
@@ -78,7 +79,14 @@ function Signin() {
             {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
 
           </div>
-          <Button disabled={isLoading} type='submit' className='bg-dark-4'>Sign in</Button>
+          <Button disabled={isLoading} type='submit' className='bg-dark-4'>
+
+            {isLoading ? (
+              <>
+                <Loading title='Sign in...' />
+              </>
+            ) : 'Sign in'}
+          </Button>
         </form>
       </section>
     </main>

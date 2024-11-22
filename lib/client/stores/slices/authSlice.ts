@@ -22,6 +22,11 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addMatcher(authApi.endpoints.signout.matchFulfilled, (state, { payload }) => {
+      state.isAuthenticated = false;
+      state.user = null;
+    });
+
     builder.addMatcher(authApi.endpoints.signin.matchFulfilled, (state, { payload }) => {
       state.isAuthenticated = true;
       state.user = payload.data as User;

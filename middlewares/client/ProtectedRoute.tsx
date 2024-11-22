@@ -16,24 +16,18 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     // Track loading and redirection state
     const [isRedirecting, setIsRedirecting] = useState(true);
 
-    const { data, isLoading, isSuccess } = useCheckAuthQuery();
+    console.log('pathname ', pathname);
+    const { isLoading, isSuccess, error } = useCheckAuthQuery();
     const { isAuthenticated, user } = useSelector((state: { auth: AuthState }) => state.auth);
-
     // Redirect logic inside useEffect to avoid triggering it during rendering
     useEffect(() => {
-        if (isSuccess && data) {
-            console.log('pathname ', pathname);
-            console.log('user ', user, isAuthenticated);
-
-            // Redirect user to appropriate page if they're on the root
+        if (isSuccess || error) {
             // If user is not authenticated, protect the routes
             if (!isAuthenticated) {
                 router.push('/sign-in');
                 return;
             }
             if (pathname == '/') {
-                console.log('this is function ', pathname);
-
                 if (user?.role === 'admin') {
                     router.push('/admin/users');
                 } else if (user?.role === 'user') {
@@ -47,7 +41,6 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
                 setIsRedirecting(false);
                 return;
             }
-
 
             // If user role isn't valid, reset auth state and redirect to home
             if (user?.role !== 'admin' && user?.role !== 'user') {
@@ -68,12 +61,9 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
                     return;
                 }
             }
-
-
-
-            // Once all checks pass, stop redirecting
-            setIsRedirecting(false);
         }
+        // Once all checks pass, stop redirecting
+        setIsRedirecting(false);
 
     }, [isAuthenticated, user, pathname, isLoading, dispatch, router]);
 

@@ -15,7 +15,7 @@ export async function signup(state: FormState, formData: FormData) {
       errors: validatedFields.error.flatten().fieldErrors,
     }
   }
-  const { username email, password } = validatedFields.data
-  console.log('this field : ', username email, password);
+  const { username ,email, password } = validatedFields.data
+  console.log('this field : ', username ,email, password);
 
 }

@@ -17,7 +17,7 @@ import {
 import { NavMain } from "@/components/ui/nav-main"
 import { NavProjects } from "@/components/ui/nav-projects"
 import { NavUser } from "@/components/ui/nav-user"
-import { TeamSwitcher } from "@/components/ui/team-switcher"
+import { TeamSwitcher } from "@/components/ui/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -25,6 +25,8 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { useSelector } from "react-redux";
+import { AuthState } from "@/lib/client/stores/slices/authSlice"
 
 // This is sample data.
 const data = {
@@ -156,7 +158,14 @@ const data = {
   ],
 }
 
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user);
+  const dataUser = {
+    name: userAuth?.username || 'user',
+    email: userAuth?.email || 'email@mail.com',
+    avatar: "https://github.com/shadcn.png",
+  }
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -167,7 +176,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={dataUser} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

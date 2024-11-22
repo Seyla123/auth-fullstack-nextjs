@@ -29,6 +29,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useSignoutMutation } from "@/lib/client/services/authApi"
+import { toast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
 
 export function NavUser({
   user,
@@ -40,6 +43,24 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const [signoutUser, { isLoading, isSuccess }] = useSignoutMutation();
+  const router = useRouter();
+  const signout = async () => {
+    try {
+      console.log('clcik signout');
+      await signoutUser().unwrap();
+      toast({
+        title: 'Success',
+        description: 'You have been successfully signed out!',
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'An unknown error occurred.',
+        variant: 'destructive',
+      })
+    }
+  }
 
   return (
     <SidebarMenu>
@@ -92,17 +113,9 @@ export function NavUser({
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={signout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
