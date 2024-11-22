@@ -12,11 +12,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { useGetAllUsersQuery } from "@/lib/client/services/admin/userApi";
 import { useSelector } from "react-redux";
+import { AuthState } from "@/lib/client/stores/slices/authSlice";
 
 export default function Home() {
-  const userAuth =  useSelector(state => state.auth.user)
+  const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user)
   //console.log('this is auth user in page : ', userAuth);
-  
+
 
   const [usersData, setUsersData] = useState<User[]>([])
   const { data: users, isSuccess, isLoading } = useGetAllUsersQuery();
