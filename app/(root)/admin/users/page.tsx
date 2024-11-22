@@ -53,7 +53,7 @@ export default function Home() {
     }
   };
 
-  //console.log(usersData);
+  console.log(usersData);
 
   //console.log('this is current checked selected : ', checkedItems);
 
