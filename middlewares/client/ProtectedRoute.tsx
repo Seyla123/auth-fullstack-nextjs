@@ -1,12 +1,14 @@
+'use client'
 import { ReactNode, useEffect } from "react";
 import { useCheckAuthQuery } from "@/lib/client/services/authApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Loading from "@/components/Loading";
 import { usePathname, useRouter } from "next/navigation";
-import { AuthState } from "@/lib/client/stores/slices/authSlice";
+import { AuthState, resetAuthState } from "@/lib/client/stores/slices/authSlice";
 export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     const router = useRouter()
     const pathname = usePathname();
+    const dispatch = useDispatch();
     const adminRoute = ['/admin/users', '/']
     const userRoute = ['/users']
 
@@ -17,7 +19,7 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
         </>
     }
     // check if user is authenticated and has required role
-    const { data, isLoading, isSuccess } = useCheckAuthQuery();
+    const { isLoading, isSuccess } = useCheckAuthQuery();
     const { isAuthenticated, user } = useSelector((state: { auth: AuthState }) => state.auth)
     useEffect(() => {
         if (pathname == '/' && isSuccess) {
@@ -32,7 +34,12 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     if (!isAuthenticated) {
         router.push('/sign-in')
     }
-    
+
+    if (user?.role != 'admin' && user?.role != 'user') {
+        dispatch(resetAuthState());
+        return <>
+            {children}</>
+    }
     if (adminRoute.includes(pathname)) {
         if (user?.role != 'admin') {
             router.push('/unauthenticatedAdmin')

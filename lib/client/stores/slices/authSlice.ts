@@ -15,16 +15,21 @@ const initialState: AuthState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    resetAuthState: (state) => {
+      state.isAuthenticated = false;
+      state.user = null;
+    },
+  },
   extraReducers: (builder) => {
-    builder.addMatcher(authApi.endpoints.signin.matchFulfilled, (state, { payload}) => {
+    builder.addMatcher(authApi.endpoints.signin.matchFulfilled, (state, { payload }) => {
       state.isAuthenticated = true;
-      state.user = payload.data as User ;
+      state.user = payload.data as User;
     });
 
     builder.addMatcher(authApi.endpoints.checkAuth.matchFulfilled, (state, { payload }) => {
       state.isAuthenticated = true;
-      state.user = payload.data as User ;
+      state.user = payload.data as User;
     });
 
     builder.addMatcher(authApi.endpoints.checkAuth.matchRejected, (state) => {
@@ -33,7 +38,7 @@ const authSlice = createSlice({
     });
   }
 });
-
+export const { resetAuthState } = authSlice.actions;
 export default authSlice.reducer;
 
 
