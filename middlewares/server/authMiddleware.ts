@@ -1,7 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken"; // Install with `npm install jsonwebtoken`
 import { db } from "@/lib/initDb";
-import { User } from "@/app/api/auth/sign-in/route";
 
 export const protect = (req: NextRequest) => {
   let token;

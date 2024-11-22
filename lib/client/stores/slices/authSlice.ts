@@ -1,39 +1,39 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { authApi } from '@/lib/client/services/authService';
-import { User } from '@/app/api/auth/sign-in/route';
+import { createSlice } from "@reduxjs/toolkit";
+import { authApi } from "@/lib/client/services/authApi";
+import { User } from "@/app/api/auth/sign-in/route";
+
+export type AuthState = {
+  isAuthenticated: boolean;
+  user: User | null;
+};
+
+const initialState: AuthState = {
+  isAuthenticated: false,
+  user: null,
+};
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    isAuthenticated: false,
-    user: null,
-  },
-  reducers: {
-    // This action is used to reset the authentication state
-    logout: (state) => {
-      state.isAuthenticated = false;
-      state.user = null;
-    },
-  },
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addMatcher(authApi.endpoints.signin.matchFulfilled, (state, { payload}) => {
+      state.isAuthenticated = true;
+      state.user = payload.data as User ;
+    });
 
-  extraReducers: (builder) => 
+    builder.addMatcher(authApi.endpoints.checkAuth.matchFulfilled, (state, { payload }) => {
+      state.isAuthenticated = true;
+      state.user = payload.data as User ;
+    });
 
-    // Check if the user is already authenticated
-    builder.addMatcher(
-      authApi.endpoints.checkAuth.matchFulfilled,
-      (state, { payload }) => {
-        state.isAuthenticated = true;
-        state.user = payload.data;
-      },
-    );
-
-    // Handle failed authentication check
     builder.addMatcher(authApi.endpoints.checkAuth.matchRejected, (state) => {
       state.isAuthenticated = false;
       state.user = null;
     });
-  },
+  }
 });
 
-export const { logout } = authSlice.actions;
 export default authSlice.reducer;
+
+

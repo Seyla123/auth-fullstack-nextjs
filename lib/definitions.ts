@@ -24,13 +24,34 @@ export const SignupFormSchema = z.object({
 })
 
 export type SignupFormValues = z.infer<typeof SignupFormSchema>;
+
+
+export const SigninFormSchema = z.object({
+  email: z
+    .string()
+    .email({ message: 'Please enter a valid email.' })
+    .trim()
+    .refine(value => !!value, { message: 'Email is required.' }),
+  password: z
+    .string()
+    .min(8, { message: 'Be at least 8 characters long' })
+    .regex(/[a-zA-Z]/, { message: 'Contain at least one letter.' })
+    .regex(/[0-9]/, { message: 'Contain at least one number.' })
+    .regex(/[^a-zA-Z0-9]/, {
+      message: 'Contain at least one special character.',
+    })
+    .trim()
+    .refine(value => !!value, { message: 'Password is required.' }),
+})
+
+export type SigninFormValues = z.infer<typeof SigninFormSchema>;
 export type FormState =
   | {
-      errors?: {
-        name?: string[]
-        email?: string[]
-        password?: string[]
-      }
-      message?: string
+    errors?: {
+      name?: string[]
+      email?: string[]
+      password?: string[]
     }
+    message?: string
+  }
   | undefined

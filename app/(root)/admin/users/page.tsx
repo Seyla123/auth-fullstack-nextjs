@@ -1,7 +1,7 @@
 'use client'
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { User } from "../api/auth/sign-in/route";
+import { User } from "@/app/api/auth/sign-in/route";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
 import Loading from "@/components/Loading";
@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 
 export default function Home() {
   const userAuth =  useSelector(state => state.auth.user)
-  console.log('this is auth user in page : ', userAuth);
+  //console.log('this is auth user in page : ', userAuth);
   
 
   const [usersData, setUsersData] = useState<User[]>([])
@@ -27,7 +27,7 @@ export default function Home() {
     }
   }, [users])
 
-  console.log('this is data from service : ', users);
+  //console.log('this is data from service : ', users);
 
 
   //function to delete one user
@@ -53,9 +53,9 @@ export default function Home() {
     }
   };
 
-  console.log(usersData);
+  //console.log(usersData);
 
-  console.log('this is current checked selected : ', checkedItems);
+  //console.log('this is current checked selected : ', checkedItems);
 
   return (
     <main className="max-w-screen-2xl mx-auto py-6 flex flex-col gap-2 px-4">

@@ -1,6 +1,8 @@
-function Loading({ noTitle = false, title = 'Loading...' }: { noTitle?: boolean, title?: string }) {
+import { cn } from "@/lib/utils"
+
+function Loading({ noTitle = false, title = 'Loading...', className }: { noTitle?: boolean, title?: string, className?:string }) {
     return (
-        <div className="flex items-center justify-center">
+        <div className={cn("flex items-center justify-center", className)}>
             <svg className="h-5 w-5 mr-4  text-gray-300 animate-spin" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
                 width="24" height="24">
                 <path

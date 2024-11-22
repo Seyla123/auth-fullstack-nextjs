@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { SignupFormSchema, SignupFormValues } from '@/lib/definitions'
 
 import { useToast } from '@/hooks/use-toast'
-import { useSignupMutation } from '@/lib/client/services/authService' // Make sure to import the mutation hook
+import { useSignupMutation } from '@/lib/client/services/authApi' // Make sure to import the mutation hook
 import Loading from '@/components/Loading'
 
 function Signup() {
@@ -87,10 +87,10 @@ function Signup() {
           </div>
 
           <Button disabled={isLoading} type='submit' className='bg-dark-4'>
-            
+
             {isLoading ? (
               <>
-              <Loading title='Sign Up...'/>
+                <Loading title='Sign Up...' />
               </>
             ) : 'Sign up'}
           </Button>

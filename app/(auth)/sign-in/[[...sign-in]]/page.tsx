@@ -5,49 +5,39 @@ import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { SignupFormSchema, SignupFormValues } from '@/lib/definitions'
-import { useState } from 'react'
+import { SigninFormSchema, SigninFormValues } from '@/lib/definitions'
 import { useToast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
+import { useSigninMutation } from '@/lib/client/services/authApi'
 
 
 function Signin() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
   const { toast } = useToast()
+  const [signin, { isLoading }] = useSigninMutation()
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupFormValues>({
-    resolver: zodResolver(SignupFormSchema),
+  } = useForm<SigninFormValues>({
+    resolver: zodResolver(SigninFormSchema),
   });
 
-  const onSubmit = async (data: SignupFormValues) => {
-    setIsLoading(true);
+  const onSubmit = async (data: SigninFormValues) => {
     try {
-      // Call the API route to sign up the user
-      const response = await fetch('/api/auth/sign-in', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      // Check if the response is not OK
-      if (!response.ok) {
-        const errorData = await response.json(); // Try to parse error details if available
-        throw new Error(errorData.message || 'Failed to sign up');
-      }
+      await signin(data).unwrap();
       toast({
         title: 'Success',
         description: 'You have been successfully signed up!',
       })
-    } catch (error : any) {
+      router.push('/')
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to sign up',
         variant: 'destructive',
       })
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -61,20 +51,6 @@ function Signin() {
         </h1>
         <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4'>
           <div className='grid w-full  items-center gap-1.5'>
-            <Label htmlFor='username'>
-              Name
-            </Label>
-            <Input
-              placeholder='username'
-              type='text'
-              {...register('username')}
-              className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.username })}
-
-            />
-            {errors.username && <span className="text-red-500 text-[12px]">{String(errors?.username?.message)}</span>}
-
-          </div>
-          <div className='grid w-full  items-center gap-1.5'>
             <Label htmlFor='email'>
               Email
             </Label>
@@ -86,7 +62,6 @@ function Signin() {
             />
             {/* {errors?.email && <p className="text-red-500 text-[12px]">{errors.email}</p>} */}
             {errors.email && <span className="text-red-500 text-[12px]">{String(errors?.email?.message)}</span>}
-
 
           </div>
           <div className='grid w-full  items-center gap-1.5'>
@@ -101,16 +76,6 @@ function Signin() {
 
             />
             {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
-            {/* {errors?.password && (
-              <div>
-                <p className="text-red-500 text-[12px]">Password must:</p>
-                <ul>
-                  {errors.password.map((error) => (
-                    <li key={error} className="text-red-500 text-[12px]">- {error}</li>
-                  ))}
-                </ul>
-              </div>
-            )} */}
 
           </div>
           <Button disabled={isLoading} type='submit' className='bg-dark-4'>Sign in</Button>

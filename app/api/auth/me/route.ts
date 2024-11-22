@@ -15,10 +15,10 @@ export async function GET(req: NextRequest) {
             message: `Hello, user with ID ${currentUserId}!`,
             data: user
         }, { status: 200 })
-    } catch (error: any) {
+    } catch (error:any) {
         return NextResponse.json({
             status: 'fail',
-            message: error.message || 'Fail to fecth current user'
+            message: error.message || 'Fail to fetch current user'
         }, { status: 401 })
     }
 }
