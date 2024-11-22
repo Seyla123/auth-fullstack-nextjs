@@ -7,7 +7,7 @@ import {
 import { Ellipsis } from "lucide-react";
 
 
-export const DropdownAction = ({ handleEdit, handleView, handleDelete }) => {
+export const DropdownAction = ({ handleEdit, handleView, handleDelete } : { handleEdit: () => void, handleView: () => void, handleDelete: () => void }) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
