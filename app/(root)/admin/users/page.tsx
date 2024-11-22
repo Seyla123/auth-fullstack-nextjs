@@ -59,7 +59,7 @@ export default function Home() {
   //console.log('this is current checked selected : ', checkedItems);
 
   return (
-    <main className="max-w-screen-2xl mx-auto py-6 flex flex-col gap-2 px-4">
+    <main className=" py-6 flex flex-col gap-2 px-4">
       <h2>Hi {userAuth?.username}, Welcome to the Home</h2>
       <div className="flex flex-row items-center justify-between gap-2">
         <Input
