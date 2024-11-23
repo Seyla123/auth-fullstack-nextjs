@@ -1,7 +1,9 @@
 import Database from 'better-sqlite3';
 import bcrypt from 'bcryptjs';
+import path from 'path';
 // Initialize the SQLite database
-export const db = new Database('./db.sqlite', {
+const dbPath = path.join('/tmp', 'db.sqlite');
+export const db = new Database(dbPath, {
   verbose: console.log,
 });
 

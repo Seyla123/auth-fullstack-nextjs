@@ -24,14 +24,20 @@ function NotFoundPage() {
             <div>
               <Image
                 alt="not found"
-                src="https://i.ibb.co/G9DC8S0/404-2.png" />
+                src="https://i.ibb.co/G9DC8S0/404-2.png" 
+                width={500}
+                height={500}
+                />
             </div>
           </div>
         </div>
         <div>
           <Image
             alt="not found" 
-            src="https://i.ibb.co/ck1SGFJ/Group.png" />
+            src="https://i.ibb.co/ck1SGFJ/Group.png"
+            width={500}
+            height={500}
+            />
         </div>
       </div>
     </section>
