@@ -7,7 +7,6 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 function ConfirmDialog({isOpen=true,onClose, onConfirm}:{isOpen?:boolean,onClose?:()=>void, onConfirm?:()=>void}) {
     return (
