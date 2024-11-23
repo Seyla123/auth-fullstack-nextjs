@@ -40,10 +40,9 @@ export async function DELETE(
     }
 }
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET( { params }: { params: { id: string } }) {
     try {
-        //const { id } = await params;
-        const id = 1;
+        const { id } = await params;
 
         const stmt = db.prepare("SELECT * FROM users WHERE id =?");
         const user = stmt.get(id);
