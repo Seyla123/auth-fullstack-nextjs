@@ -2,9 +2,7 @@
 
 import {
   BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
   Sparkles,
 } from "lucide-react"
@@ -31,7 +29,6 @@ import {
 } from "@/components/ui/sidebar"
 import { useSignoutMutation } from "@/lib/client/services/authApi"
 import { toast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
 
 export function NavUser({
   user,
@@ -43,8 +40,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
-  const [signoutUser, { isLoading, isSuccess }] = useSignoutMutation();
-  const router = useRouter();
+  const [signoutUser] = useSignoutMutation();
   const signout = async () => {
     try {
       console.log('clcik signout');
@@ -53,10 +49,10 @@ export function NavUser({
         title: 'Success',
         description: 'You have been successfully signed out!',
       })
-    } catch (error) {
+    } catch (error:unknown) {
       toast({
         title: 'Error',
-        description: 'An unknown error occurred.',
+        description:error instanceof Error ? error.message :'An unknown error occurred.',
         variant: 'destructive',
       })
     }

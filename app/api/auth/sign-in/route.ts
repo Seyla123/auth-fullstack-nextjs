@@ -1,4 +1,5 @@
 "use server";
+
 import { db } from "@/lib/initDb";
 import { z } from "zod";
 import { SigninFormSchema } from "@/lib/definitions";
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
         // Send the token and user data
         return createSendToken(user, 200, req);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         // Handle validation error
         if (error instanceof z.ZodError) {
             return NextResponse.json({ errors: error.issues[0].message }, { status: 400 });

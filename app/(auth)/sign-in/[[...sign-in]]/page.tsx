@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation'
 import { useSigninMutation } from '@/lib/client/services/authApi'
 import Loading from '@/components/Loading'
 
+export type ErrorDataType = { data: { message: string } }
 
 function Signin() {
   const router = useRouter();
@@ -33,10 +34,11 @@ function Signin() {
         description: 'You have been successfully signed up!',
       })
       router.push('/')
-    } catch (error: any) {
+    } catch (error : unknown) {
+      const errorData = error as ErrorDataType;
       toast({
         title: 'Error',
-        description: error.message || 'Failed to sign up',
+        description: errorData?.data?.message || 'Failed to sign up',
         variant: 'destructive',
       })
     }

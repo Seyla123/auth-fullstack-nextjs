@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button'
 import React from 'react';
 import { useSignoutMutation } from '@/lib/client/services/authApi';
 import { toast } from '@/hooks/use-toast';
+import { ErrorDataType } from '@/app/(auth)/sign-in/[[...sign-in]]/page';
 
 const Page = () => {
-    const [signoutUser, { isLoading, isSuccess }] = useSignoutMutation()
+    const [signoutUser] = useSignoutMutation()
     const signout = async () => {
         try {
             console.log('this clicked sigout');
@@ -16,10 +17,10 @@ const Page = () => {
                 description: 'You have been successfully signed out!',
             })
         } catch (error) {
-            console.log('error', error);
+            const errorData = error as ErrorDataType;
             toast({
                 title: 'Error',
-                description: 'An unknown error occurred.',
+                description: errorData?.data?.message||'An unknown error occurred.',
                 variant: 'destructive',
             })
         }

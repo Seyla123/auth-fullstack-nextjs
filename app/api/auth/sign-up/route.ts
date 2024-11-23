@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       { message: "Data received successfully", data: users },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error:unknown) {
     // Type the error as an instance of Error
     if (error instanceof Error) {
       if (error instanceof z.ZodError) {

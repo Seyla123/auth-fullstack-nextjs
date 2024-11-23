@@ -22,10 +22,10 @@ export async function GET(req: NextRequest) {
             },
             { status: 200 }
         );
-    } catch (error: any) {
+    } catch (error: unknown) {
         // Default error response for unexpected errors
         return NextResponse.json(
-            { message: error.message || "An error occurred while creating the user" },
+            { message: error instanceof Error ? error.message  : "An error occurred while creating the user" },
             { status: 500 } // Internal Server Error
         );
     }

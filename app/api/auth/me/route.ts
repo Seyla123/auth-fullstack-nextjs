@@ -1,3 +1,4 @@
+
 import { protect, restrict } from "@/middlewares/server/authMiddleware";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -15,10 +16,10 @@ export async function GET(req: NextRequest) {
             message: `Hello, user with ID ${currentUserId}!`,
             data: user
         }, { status: 200 })
-    } catch (error:any) {
+    } catch (error:unknown) {
         return NextResponse.json({
             status: 'fail',
-            message: error.message || 'Fail to fetch current user'
+            message: error instanceof Error ? error.message  : 'Fail to fetch current user'
         }, { status: 401 })
     }
 }

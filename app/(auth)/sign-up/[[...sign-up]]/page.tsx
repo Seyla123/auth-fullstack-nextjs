@@ -1,4 +1,5 @@
 'use client'
+// @typescript-eslint/no-explicit-any
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -10,6 +11,7 @@ import { SignupFormSchema, SignupFormValues } from '@/lib/definitions'
 import { useToast } from '@/hooks/use-toast'
 import { useSignupMutation } from '@/lib/client/services/authApi' // Make sure to import the mutation hook
 import Loading from '@/components/Loading'
+import { ErrorDataType } from '../../sign-in/[[...sign-in]]/page'
 
 function Signup() {
   const { toast } = useToast()
@@ -30,11 +32,12 @@ function Signup() {
         title: 'Success',
         description: 'You have been successfully signed up!',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorData = error as ErrorDataType;
       // Handle the error case
       toast({
         title: 'Error',
-        description: error?.data?.message || 'An unknown error occurred.',
+        description: errorData?.data?.message || 'An unknown error occurred.',
         variant: 'destructive',
       });
     }

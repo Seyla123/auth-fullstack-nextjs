@@ -1,4 +1,5 @@
 'use client'
+//@typescript-eslint/no-explicit-any
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { User } from "@/app/api/auth/sign-in/route";
@@ -15,6 +16,7 @@ import { useSelector } from "react-redux";
 import { AuthState } from "@/lib/client/stores/slices/authSlice";
 import { useDeleteUserMutation } from "@/lib/client/services/admin/userApi"
 import ConfirmDialog from "@/components/ui/confirm-dialog";
+import { ErrorDataType } from "@/app/(auth)/sign-in/[[...sign-in]]/page";
 export default function Home() {
   // Get the authenticated user from the Redux store
   const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user);
@@ -53,15 +55,16 @@ export default function Home() {
   //function to delete one user
   const deleteUser = async (id: string | number) => {
     try {
-      await deleteOneUser('dsdf').unwrap();
+      await deleteOneUser(id).unwrap();
       toast({
         title: 'Delete Success',
         description: 'User deleted successfully',
       })
-    } catch (error) {
+    } catch (error:unknown) {
+      const errorData = error as ErrorDataType;
       toast({
         title: 'Failed to delete user',
-        description: error?.data?.message || 'Failed to delete user',
+        description: errorData?.data?.message || 'Failed to delete user',
         variant: 'destructive',
       })
     }
@@ -99,7 +102,7 @@ export default function Home() {
     setItemDeleteOne(id)
     setIsDeleteModalOpen(true);
   }
-  
+
   return (
     <main className=" py-6 flex flex-col gap-2 px-4">
       <h2>Hi {userAuth?.username}, Welcome to the Home</h2>

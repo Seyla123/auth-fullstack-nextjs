@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
@@ -11,7 +12,7 @@ function NotFoundPage() {
             <div className="absolute">
               <div className="">
                 <h1 className="my-2 text-gray-800 font-bold text-2xl">
-                  Looks like you've found the
+                  Looks like you&apos;ve found the
                   doorway to the great nothing
                 </h1>
                 <p className="my-2 text-gray-800">Sorry about that! Please visit our hompage to get where you need to go.</p>
@@ -21,12 +22,16 @@ function NotFoundPage() {
               </div>
             </div>
             <div>
-              <img src="https://i.ibb.co/G9DC8S0/404-2.png" />
+              <Image
+                alt="not found"
+                src="https://i.ibb.co/G9DC8S0/404-2.png" />
             </div>
           </div>
         </div>
         <div>
-          <img src="https://i.ibb.co/ck1SGFJ/Group.png" />
+          <Image
+            alt="not found" 
+            src="https://i.ibb.co/ck1SGFJ/Group.png" />
         </div>
       </div>
     </section>
