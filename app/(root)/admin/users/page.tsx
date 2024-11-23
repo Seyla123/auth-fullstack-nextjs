@@ -14,6 +14,7 @@ import { useGetAllUsersQuery } from "@/lib/client/services/admin/userApi";
 import { useSelector } from "react-redux";
 import { AuthState } from "@/lib/client/stores/slices/authSlice";
 import { useDeleteUserMutation } from "@/lib/client/services/admin/userApi"
+import ConfirmDialog from "@/components/ui/confirm-dialog";
 export default function Home() {
   const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user)
 
@@ -21,6 +22,10 @@ export default function Home() {
   const { data: users, isSuccess, isLoading } = useGetAllUsersQuery();
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
 
+
+  //confirmation modal dialog
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [itemDeleteOne, setItemDeleteOne] = useState<string | number>('');
   const [deleteOneUser] = useDeleteUserMutation();
   useEffect(() => {
     if (users && isSuccess) {
@@ -79,6 +84,12 @@ export default function Home() {
       setCheckedItems([]);
     }
   };
+
+  // handle click on delete one user and open confirm modal
+  const handleDelete = (id: string | number) => {
+    setItemDeleteOne(id)
+    setIsDeleteModalOpen(true);
+  }
   return (
     <main className=" py-6 flex flex-col gap-2 px-4">
       <h2>Hi {userAuth?.username}, Welcome to the Home</h2>
@@ -137,11 +148,13 @@ export default function Home() {
                       <TableCell >
                         <DropdownAction
                           handleEdit={() => console.log(`edit ${user?.username}`)}
-                          handleDelete={() => deleteUser(user?.id)}
+                          handleDelete={() => handleDelete(user?.id)}
                           handleView={() => console.log(`view ${user?.id}`)}
                         />
+
                       </TableCell>
                     </TableRow>
+
                   )
                 })
                 :
@@ -157,6 +170,11 @@ export default function Home() {
           </TableBody>
         </Table>
       </section>
+      <ConfirmDialog
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => deleteUser(itemDeleteOne)}
+      />
     </main>
   );
 }
