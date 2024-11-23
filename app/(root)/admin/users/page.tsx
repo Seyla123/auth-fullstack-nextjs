@@ -16,64 +16,73 @@ import { AuthState } from "@/lib/client/stores/slices/authSlice";
 import { useDeleteUserMutation } from "@/lib/client/services/admin/userApi"
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 export default function Home() {
-  const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user)
+  // Get the authenticated user from the Redux store
+  const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user);
 
-  const [usersData, setUsersData] = useState<User[]>([])
+  // useGetAllUsersQuery : hook to fetch user data
   const { data: users, isSuccess, isLoading } = useGetAllUsersQuery();
+  // useDeleteUserMutation : Mutation hook to handle user deletion
+  const [deleteOneUser, { isLoading: isDeleteLoading }] = useDeleteUserMutation();
+
+  // state for users data
+  const [usersData, setUsersData] = useState<User[]>([]);
+
+  // State to track checked items for selection
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
 
-
-  //confirmation modal dialog
+  // State to control the visibility of the delete confirmation modal
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  // State to store the ID of the user to be deleted
   const [itemDeleteOne, setItemDeleteOne] = useState<string | number>('');
-  const [deleteOneUser] = useDeleteUserMutation();
+
   useEffect(() => {
     if (users && isSuccess) {
       setUsersData(users?.data);
     }
   }, [users, isSuccess])
 
-
+  useEffect(() => {
+    if (isDeleteLoading) {
+      toast({
+        title: 'Loading',
+        description: 'Loading users data',
+      })
+    }
+  }, [isDeleteLoading])
 
   //function to delete one user
   const deleteUser = async (id: string | number) => {
     try {
-      await deleteOneUser(id).unwrap();
+      await deleteOneUser('dsdf').unwrap();
       toast({
-        title: 'Success',
+        title: 'Delete Success',
         description: 'User deleted successfully',
       })
     } catch (error) {
       toast({
-        title: 'Error',
+        title: 'Failed to delete user',
         description: error?.data?.message || 'Failed to delete user',
+        variant: 'destructive',
       })
     }
-
   };
 
-  console.log(usersData);
-
-  //console.log('this is current checked selected : ', checkedItems);
-
+  // handle click on checkbox
   const isSelected = (id: string) => checkedItems.indexOf(id) !== -1;
   const handleCheckboxClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
     event.stopPropagation();
     const isSelected = checkedItems.find((item) => item === id);
     console.log('isSelected : ', isSelected);
     if (isSelected) {
-      console.log('isSelected : ', true);
-
       setCheckedItems(checkedItems.filter((item) => item !== id));
     } else {
-      console.log('isSelected : ', false);
-
       setCheckedItems([...checkedItems, id]);
     }
 
   }
   console.log('checked : ', checkedItems);
 
+  // handle chckbox multiple
   const handleSelectAllClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const target = event.target as HTMLDivElement;
 
@@ -90,6 +99,7 @@ export default function Home() {
     setItemDeleteOne(id)
     setIsDeleteModalOpen(true);
   }
+  
   return (
     <main className=" py-6 flex flex-col gap-2 px-4">
       <h2>Hi {userAuth?.username}, Welcome to the Home</h2>
@@ -178,4 +188,5 @@ export default function Home() {
     </main>
   );
 }
+
 

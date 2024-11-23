@@ -8,7 +8,7 @@ interface DefaultResponse {
     data: User[];
 }
 
-interface DeleteUserResponse {
+export interface DeleteUserResponse {
     status: string;
     message: string
 }
