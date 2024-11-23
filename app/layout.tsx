@@ -1,7 +1,11 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { ReduxProvider } from "./providers/ReduxProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { Suspense } from "react";
+import Loading from "@/components/Loading";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,16 +25,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        <Toaster />
+        <ReduxProvider>
+          <Suspense fallback={<Loading className="w-full flex justify-center h-screen" />}>
+            {children}
+            <Toaster />
+          </Suspense>
+        </ReduxProvider>
       </body>
     </html>
   );

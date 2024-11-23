@@ -1,42 +1,55 @@
-'use server'
-import { NextRequest, NextResponse } from "next/server";
+"use server";
+
 import { db } from "@/lib/initDb";
-import { z } from 'zod';
-import { SignupFormSchema } from "@/lib/definitions";
-import crypto from 'node:crypto';
+import { z } from "zod";
+import { SigninFormSchema } from "@/lib/definitions";
+import bcrypt from "bcryptjs";
+import { createSendToken } from "@/lib/server/utils/authUtils";
+import { NextRequest, NextResponse } from "next/server";
+
+const correctPassword = async (candidatePassword: string, hash: string) => {
+    return await bcrypt.compare(candidatePassword, hash);
+};
+
+export type User = {
+    id: number | string;
+    username: string;
+    email: string;
+    role: string;
+    password: string;
+    active: boolean;
+    emailVerified: boolean;
+};
+
 export async function POST(req: NextRequest) {
     try {
-        const data = await req.json();
-        const validatedData = SignupFormSchema.parse(data);
-        const { name, email, password } = validatedData;
-        const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
-        const stmt = db.prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-        stmt.run(name, email, hashedPassword);
-        const getUsers = db.prepare(`
-            SELECT * FROM users
-          `);
-        const users = getUsers.all();
-        return NextResponse.json({ message: 'Data received successfully', data: users }, { status: 201 });
-    } catch (error) {
-        // Type the error as an instance of Error
-        if (error instanceof Error) {
-            console.error('SQLite Error:', error.message);
-            if (error instanceof z.ZodError) {
-                return NextResponse.json({ errors: error.issues[0].message }, { status: 400 });
-            }
-            // Handle SQLite-specific errors (e.g., constraint violations)
-            if (error.message.includes('UNIQUE constraint failed')) {
-                return NextResponse.json(
-                    { message: "A user with this email already exists" },
-                    { status: 400 } // Bad Request
-                );
-            }
+        // Parse and validate the incoming data
+        const data = await req.json(); // Use .json() to parse the request body
+        const validatedData = SigninFormSchema.parse(data); // Zod validation
+
+        const { email, password } = validatedData;
+
+        // Query database to find the user
+        const stmt = db.prepare("SELECT id,username, email, password, role, active, emailVerified FROM users WHERE email = ?");
+        const user = stmt.get(email) as User;
+
+        if (!user) throw new Error("User not found");
+
+        // Verify the password
+        const isValid = await correctPassword(password, user.password);
+        if (!isValid) throw new Error("Password is not correct");
+
+        // Send the token and user data
+        return createSendToken(user, 200, req);
+
+    } catch (error: unknown) {
+        // Handle validation error
+        if (error instanceof z.ZodError) {
+            return NextResponse.json({ errors: error.issues[0].message }, { status: 400 });
         }
 
-        // Default error response for unexpected errors
-        return NextResponse.json(
-            { message: "An error occurred while creating the user" },
-            { status: 500 } // Internal Server Error
-        );
+        return NextResponse.json({
+            message: error instanceof Error ? error.message : "An unexpected error occurred",
+        }, { status: 500 });
     }
 }
