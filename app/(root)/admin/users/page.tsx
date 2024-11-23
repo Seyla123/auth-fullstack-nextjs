@@ -16,7 +16,6 @@ import { AuthState } from "@/lib/client/stores/slices/authSlice";
 
 export default function Home() {
   const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user)
-  //console.log('this is auth user in page : ', userAuth);
 
   const [usersData, setUsersData] = useState<User[]>([])
   const { data: users, isSuccess, isLoading } = useGetAllUsersQuery();
@@ -27,11 +26,10 @@ export default function Home() {
     }
   }, [users, isSuccess])
 
-  //console.log('this is data from service : ', users);
 
 
   //function to delete one user
-  const deleteUser = async (id: string) => {
+  const deleteUser = async (id: string | number) => {
     try {
       const response = await fetch(`/api/admin/users/${id}`, {
         method: "DELETE",
@@ -44,10 +42,10 @@ export default function Home() {
         title: "Success",
         description: "User deleted successfully",
       })
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: 'Error',
-        description: error.message || 'Fail to delete user',
+        description: (error as Error).message || 'Fail to delete user',
         variant: 'destructive',
       })
     }
@@ -57,37 +55,9 @@ export default function Home() {
 
   //console.log('this is current checked selected : ', checkedItems);
 
-  const isSelected = (id: string | number) => checkedItems.indexOf(id) !== -1;
-  // const handleCheckboxClick = (event: { stopPropagation: () => void; }, id: string) => {
-  //   event.stopPropagation();
-  //   const selectedIndex = checkedItems.indexOf(id);
-  //   console.log('this is selected', selectedIndex);
-
-  //   let newSelected: any[] = [];
-
-  //   if (selectedIndex === -1) {
-  //     console.log('first');
-
-  //     newSelected = newSelected.concat(checkedItems, id);
-  //   } else if (selectedIndex === 0) {
-  //     console.log('second');
-
-  //     newSelected = newSelected.concat(checkedItems.slice(1));
-  //   } else if (selectedIndex === checkedItems.length - 1) {
-  //     newSelected = checkedItems.concat(checkedItems.slice(0, -1));
-  //   } else (selectedIndex > 0) {
-  //     console.log('third');
-
-  //      newSelected = checkedItems.filter((_, index) => index !== selectedIndex);
-  //     // newSelected = checkedItems.concat(
-  //     //   checkedItems.slice(0, selectedIndex),
-  //     //   checkedItems.slice(selectedIndex + 1),
-  //     // );
-  //     console.log('selectied ' + newSelected);
-  //   }
-  //   setCheckedItems(newSelected);
-  // };
-  const handleCheckboxClick = (event, id: string) => {
+  const isSelected = (id: string) => checkedItems.indexOf(id) !== -1;
+  const handleCheckboxClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+    event.stopPropagation();
     const isSelected = checkedItems.find((item) => item === id);
     console.log('isSelected : ', isSelected);
     if (isSelected) {
@@ -103,17 +73,12 @@ export default function Home() {
   }
   console.log('checked : ', checkedItems);
 
-  const handleSelectAllClick = (event) => {
-    console.log(event.target.getAttribute('aria-checked'));
-    
-    
-    if (event.target.getAttribute('aria-checked')=='false') {
+  const handleSelectAllClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const target = event.target as HTMLDivElement;
+
+    if (target.getAttribute('aria-checked') === 'false') {
       const newSelecteds = usersData.map((user) => String(user?.id));
       setCheckedItems(newSelecteds);
-      console.log('selected : ', newSelecteds);
-    console.log('this is aria checked ',event.target.getAttribute('aria-checked'));
-
-      
     } else {
       setCheckedItems([]);
     }

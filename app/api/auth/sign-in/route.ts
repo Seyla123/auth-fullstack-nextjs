@@ -11,7 +11,7 @@ const correctPassword = async (candidatePassword: string, hash: string) => {
 };
 
 export type User = {
-    id: number;
+    id: number | string;
     username: string;
     email: string;
     role: string;
