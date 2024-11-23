@@ -2,7 +2,7 @@
 import { protect, restrict } from "@/middlewares/server/authMiddleware";
 import { NextRequest, NextResponse } from "next/server";
 
-export default async function GET(req: NextRequest) {
+export function GET(req: NextRequest) {
     try {
         protect(req);
         restrict(req, ['admin', 'user'])
