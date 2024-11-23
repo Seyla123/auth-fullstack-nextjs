@@ -10,7 +10,7 @@ import { userApi } from '@/lib/client/services/admin/userApi';
 
 const stores = configureStore({
     reducer: {
-        auth : authReducer,
+        auth: authReducer,
         [authApi.reducerPath]: authApi.reducer,
         [userApi.reducerPath]: userApi.reducer
 

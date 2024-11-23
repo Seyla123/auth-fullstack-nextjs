@@ -13,13 +13,15 @@ import { toast } from "@/hooks/use-toast";
 import { useGetAllUsersQuery } from "@/lib/client/services/admin/userApi";
 import { useSelector } from "react-redux";
 import { AuthState } from "@/lib/client/stores/slices/authSlice";
-
+import { useDeleteUserMutation } from "@/lib/client/services/admin/userApi"
 export default function Home() {
   const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user)
 
   const [usersData, setUsersData] = useState<User[]>([])
   const { data: users, isSuccess, isLoading } = useGetAllUsersQuery();
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
+
+  const [deleteOneUser] = useDeleteUserMutation();
   useEffect(() => {
     if (users && isSuccess) {
       setUsersData(users?.data);
@@ -31,24 +33,18 @@ export default function Home() {
   //function to delete one user
   const deleteUser = async (id: string | number) => {
     try {
-      const response = await fetch(`/api/admin/users/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete user");
-      }
-      setUsersData(usersData.filter(user => user.id !== id));
+      await deleteOneUser(id).unwrap();
       toast({
-        title: "Success",
-        description: "User deleted successfully",
+        title: 'Success',
+        description: 'User deleted successfully',
       })
     } catch (error) {
       toast({
         title: 'Error',
-        description: (error as Error).message || 'Fail to delete user',
-        variant: 'destructive',
+        description: error?.data?.message || 'Failed to delete user',
       })
     }
+
   };
 
   console.log(usersData);

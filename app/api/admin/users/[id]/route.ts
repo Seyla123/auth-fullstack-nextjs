@@ -18,13 +18,13 @@ export async function DELETE(
     req: NextRequest, { params }: { params: { id: string } }
 ) {
     try {
-        const id = await params.id;
+        const id = params.id;
         const isDeleted = await deleteUser(id);
         if (isDeleted) {
             return NextResponse.json({
                 status: "success",
                 message: `User ID ${id} deleted successfully`,
-            })
+            }, { status: 200 });
         } else {
             return NextResponse.json({
                 status: "error",
