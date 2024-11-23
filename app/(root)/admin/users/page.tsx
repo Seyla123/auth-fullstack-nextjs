@@ -18,7 +18,6 @@ export default function Home() {
   const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user)
   //console.log('this is auth user in page : ', userAuth);
 
-
   const [usersData, setUsersData] = useState<User[]>([])
   const { data: users, isSuccess, isLoading } = useGetAllUsersQuery();
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
@@ -59,39 +58,61 @@ export default function Home() {
   //console.log('this is current checked selected : ', checkedItems);
 
   const isSelected = (id: string | number) => checkedItems.indexOf(id) !== -1;
-  const handleCheckboxClick = (event: { stopPropagation: () => void; }, id: any) => {
-    event.stopPropagation();
-    const selectedIndex = checkedItems.indexOf(id);
-    console.log('this is selected', selectedIndex);
+  // const handleCheckboxClick = (event: { stopPropagation: () => void; }, id: string) => {
+  //   event.stopPropagation();
+  //   const selectedIndex = checkedItems.indexOf(id);
+  //   console.log('this is selected', selectedIndex);
 
-    let newSelected: any[] | ((prevState: string[]) => string[]) = [];
+  //   let newSelected: any[] = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(checkedItems, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(checkedItems.slice(1));
-    } else if (selectedIndex === checkedItems.length - 1) {
-      newSelected = checkedItems.concat(checkedItems.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      // newSelected = checkedItems.filter((_, index) => index !== selectedIndex);
-      newSelected = checkedItems.concat(
-        checkedItems.slice(0, selectedIndex),
-        checkedItems.slice(selectedIndex + 1),
-      );
-      console.log('selectied ' + newSelected);
+  //   if (selectedIndex === -1) {
+  //     console.log('first');
+
+  //     newSelected = newSelected.concat(checkedItems, id);
+  //   } else if (selectedIndex === 0) {
+  //     console.log('second');
+
+  //     newSelected = newSelected.concat(checkedItems.slice(1));
+  //   } else if (selectedIndex === checkedItems.length - 1) {
+  //     newSelected = checkedItems.concat(checkedItems.slice(0, -1));
+  //   } else (selectedIndex > 0) {
+  //     console.log('third');
+
+  //      newSelected = checkedItems.filter((_, index) => index !== selectedIndex);
+  //     // newSelected = checkedItems.concat(
+  //     //   checkedItems.slice(0, selectedIndex),
+  //     //   checkedItems.slice(selectedIndex + 1),
+  //     // );
+  //     console.log('selectied ' + newSelected);
+  //   }
+  //   setCheckedItems(newSelected);
+  // };
+  const handleCheckboxClick = (event, id: string) => {
+    const isSelected = checkedItems.find((item) => item === id);
+    console.log('isSelected : ', isSelected);
+    if (isSelected) {
+      console.log('isSelected : ', true);
+
+      setCheckedItems(checkedItems.filter((item) => item !== id));
+    } else {
+      console.log('isSelected : ', false);
+
+      setCheckedItems([...checkedItems, id]);
     }
-    console.log('selection changed to ' + newSelected);
 
-    setCheckedItems(newSelected);
+  }
+  console.log('checked : ', checkedItems);
 
-  };
   const handleSelectAllClick = (event) => {
-    console.log('selected : ', checkedItems, event.target.getAttribute('aria-checked'));
-  
-    if (Boolean(event.target.getAttribute('aria-checked'))) {
-      const newSelecteds = usersData.map((user) => user?.id);
+    console.log(event.target.getAttribute('aria-checked'));
+    
+    
+    if (event.target.getAttribute('aria-checked')=='false') {
+      const newSelecteds = usersData.map((user) => String(user?.id));
       setCheckedItems(newSelecteds);
       console.log('selected : ', newSelecteds);
+    console.log('this is aria checked ',event.target.getAttribute('aria-checked'));
+
       
     } else {
       setCheckedItems([]);
@@ -117,8 +138,8 @@ export default function Home() {
             <TableRow>
               <TableHead className="w-1">
                 <Checkbox
-                  checked={usersData.length > 0 && checkedItems.length === usersData.length}
-                  onClick={(event)=> handleSelectAllClick(event)} />
+                  checked={checkedItems.length > 0}
+                  onClick={(event) => handleSelectAllClick(event)} />
               </TableHead>
               <TableHead>ID</TableHead>
               <TableHead>Username</TableHead>
