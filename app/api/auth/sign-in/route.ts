@@ -24,19 +24,38 @@ export async function POST(req: NextRequest) {
     try {
         // Parse and validate the incoming data
         const data = await req.json(); // Use .json() to parse the request body
-        const validatedData = SigninFormSchema.parse(data); // Zod validation
+        const validatedData = SigninFormSchema.safeParse(data); // Zod validation
 
-        const { email, password } = validatedData;
+        if (!validatedData.success) {
+
+            // Respond with validation messages
+            const firstIssue = validatedData.error.issues[0];
+            return NextResponse.json(
+              { message: firstIssue.message },
+              { status: 400 }
+            );
+          }
+        const { email, password } = validatedData.data;
 
         // Query database to find the user
         const stmt = db.prepare("SELECT id,username, email, password, role, active, emailVerified FROM users WHERE email = ?");
         const user = stmt.get(email) as User;
 
-        if (!user) throw new Error("User not found");
+        if (!user) {
+            return NextResponse.json({
+                status: "error",
+                message: "No user found with this email address",
+            }, { status: 401 })
+        };
 
         // Verify the password
         const isValid = await correctPassword(password, user.password);
-        if (!isValid) throw new Error("Password is not correct");
+        if (!isValid) {
+            return NextResponse.json({
+                status: "error",
+                message: "Password is incorrect",
+            }, { status: 401 })
+        };
 
         // Send the token and user data
         return createSendToken(user, 200, req);
