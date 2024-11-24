@@ -4,8 +4,9 @@ import { db } from "@/lib/initDb";
 import { NextRequest, NextResponse } from "next/server";
 import catchAsync from "@/lib/server/utils/catchAsync";
 
-// Define your async handler
-const inviteUserHandler = async (req: NextRequest) => {
+
+// Wrap your handler with catchAsync
+export const POST = catchAsync(async (req: NextRequest) => {
     const data = await req.json();
 
     // Validate data using InviteUserFormSchema
@@ -30,7 +31,4 @@ const inviteUserHandler = async (req: NextRequest) => {
         },
         { status: 201 }
     );
-};
-
-// Wrap your handler with catchAsync
-export const POST = catchAsync(inviteUserHandler);
+});
