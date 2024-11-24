@@ -3,7 +3,15 @@ import jwt from "jsonwebtoken";
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from "next/server";
 import crypto from 'crypto';
-
+import AppError from "./appError";
+import { db } from "@/lib/initDb";
+export type invitedUser = {
+    id: number | string;
+    email: string;
+    role: string;
+    inviteToken: string;
+    expiredAt: string;
+}
 const signToken = (id: string | number): string =>
     jwt.sign({ id }, process.env.JWT_SECRET as string, {
         expiresIn: process.env.JWT_EXPIRES_IN,
@@ -45,21 +53,32 @@ const createSendToken = async (
     }
 };
 
-const signInviteToken = (email: string, role: string, inviteToken: string) => {
-    return jwt.sign({ email, role, inviteToken }, process.env.JWT_SECRET as string, {
-        expiresIn: process.env.JWT_INVITE_EXPIRES_IN,
-    });
-}
-
-const createInviteToken = (email: string, role: string) => {
-    const inviteToken = crypto.randomBytes(32).toString('hex');
+const createVerificationToken = () => {
+    const token = crypto.randomBytes(32).toString('hex');
     const hashedToken = crypto
         .createHash('sha256')
-        .update(inviteToken)
+        .update(token)
         .digest('hex');
-    
-    return { inviteToken, hashedToken };
+
+    return { token, hashedToken };
 }
 
-export { signToken, createSendToken, createInviteToken };
+export const verifyInvite = async (token: string) => {
+    const hashedToken = crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+
+    const invitedUser = db.prepare('SELECT * FROM invites WHERE inviteToken = ?').get(hashedToken) as invitedUser;
+    if (!invitedUser) {
+        throw new AppError("User not found", 404);
+    }
+
+    if (new Date() > new Date(invitedUser.expiredAt)) {
+        throw new AppError('Invite token has expired', 401);
+    }
+
+    return invitedUser;
+};
+export { signToken, createSendToken, createVerificationToken };
 

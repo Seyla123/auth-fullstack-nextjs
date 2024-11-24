@@ -3,7 +3,7 @@ import { InviteUserFormSchema } from "@/lib/definitions";
 import { db } from "@/lib/initDb";
 import { NextRequest, NextResponse } from "next/server";
 import catchAsync from "@/lib/server/utils/catchAsync";
-import { createInviteToken } from "@/lib/server/utils/authUtils";
+import { createVerificationToken, verifyInvite } from "@/lib/server/utils/authUtils";
 
 
 // Wrap your handler with catchAsync
@@ -19,12 +19,10 @@ export const POST = catchAsync(async (req: NextRequest) => {
 
     const { email, role } = validateData.data;
 
-    // Insert data into the database
-    // const stmt = db.prepare(`INSERT INTO users (email, role) VALUES (?, ?)`);
-    // stmt.run(email, role);
-    const invitetoken = createInviteToken(email, role);
-    const stmt = db.prepare(`INSERT INTO invites (email, role, inviteToken) VALUES (?, ?,?)`);
-    stmt.run(email, role, invitetoken);
+    const { token, hashedToken } = createVerificationToken();
+    const expiredDate = new Date(Date.now() + 1000 * 60 * 60); // 1 hour from now
+    const stmt = db.prepare(`INSERT INTO invites (email, role, inviteToken, expiredAt) VALUES (?, ?,?,?)`);
+    stmt.run(email, role, hashedToken, expiredDate.toISOString());
 
     const allData = db.prepare('SELECT * FROM invites').all();
 
@@ -33,8 +31,24 @@ export const POST = catchAsync(async (req: NextRequest) => {
         {
             status: 'success',
             message: "User invited successfully",
-            data: { email, role, allData }
+            data: { email, role, allData },
+            token
         },
         { status: 201 }
     );
 });
+
+
+
+export const GET = catchAsync(async (req: NextRequest) => {
+    const { searchParams } = new URL(req.url);
+    const token = searchParams.get('token');
+    if (!token) {
+        throw new AppError("token not provided", 400);
+    }
+
+    const invitedUser = await verifyInvite(token);
+
+    return NextResponse.json({ status: 'success', message: "Verify user invite successfully", data: invitedUser }, { status: 200 });
+});
+

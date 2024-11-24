@@ -30,7 +30,8 @@ export const initDb = async () => {
       role TEXT NOT NULL CHECK(role IN ('user', 'admin')), 
       inviteToken TEXT NOT NULL,  
       status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'accepted', 'expired')),  
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      expiredAt DATETIME
     )
   `);
 
