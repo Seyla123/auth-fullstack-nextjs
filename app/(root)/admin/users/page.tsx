@@ -175,7 +175,10 @@ export default function Home() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant={"outline"} onClick={() => setIsInviteUserOpen(false)}>Cancel</Button>
+              <Button variant={"outline"} onClick={(e) => {
+                e.preventDefault();
+                setIsInviteUserOpen(false);
+              }}>Cancel</Button>
               <Button type="submit">Send Invitation</Button>
             </DialogFooter>
           </form>
