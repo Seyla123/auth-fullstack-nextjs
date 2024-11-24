@@ -24,6 +24,6 @@ export const POST = catchAsync(async (req: NextRequest) => {
             message: 'User logged out successfully'
         }, { status: 200 });
     } catch (error: unknown) {
-        throw new AppError(error instanceof Error ? error.message : 'Failed to logout', 500);
+        throw new AppError(error instanceof Error ? error.message : 'Failed to logout', 401);
     }
 });

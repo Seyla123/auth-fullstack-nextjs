@@ -2,6 +2,7 @@ import { User } from "@/app/api/auth/sign-in/route";
 import jwt from "jsonwebtoken";
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from "next/server";
+import crypto from 'crypto';
 
 const signToken = (id: string | number): string =>
     jwt.sign({ id }, process.env.JWT_SECRET as string, {
@@ -44,5 +45,21 @@ const createSendToken = async (
     }
 };
 
-export { signToken, createSendToken };
+const signInviteToken = (email: string, role: string, inviteToken: string) => {
+    return jwt.sign({ email, role, inviteToken }, process.env.JWT_SECRET as string, {
+        expiresIn: process.env.JWT_INVITE_EXPIRES_IN,
+    });
+}
+
+const createInviteToken = (email: string, role: string) => {
+    const inviteToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto
+        .createHash('sha256')
+        .update(inviteToken)
+        .digest('hex');
+    
+    return { inviteToken, hashedToken };
+}
+
+export { signToken, createSendToken, createInviteToken };
 

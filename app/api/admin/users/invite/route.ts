@@ -3,6 +3,7 @@ import { InviteUserFormSchema } from "@/lib/definitions";
 import { db } from "@/lib/initDb";
 import { NextRequest, NextResponse } from "next/server";
 import catchAsync from "@/lib/server/utils/catchAsync";
+import { createInviteToken } from "@/lib/server/utils/authUtils";
 
 
 // Wrap your handler with catchAsync
@@ -21,8 +22,9 @@ export const POST = catchAsync(async (req: NextRequest) => {
     // Insert data into the database
     // const stmt = db.prepare(`INSERT INTO users (email, role) VALUES (?, ?)`);
     // stmt.run(email, role);
+    const invitetoken = createInviteToken(email, role);
     const stmt = db.prepare(`INSERT INTO invites (email, role, inviteToken) VALUES (?, ?,?)`);
-    stmt.run(email, role, 'unique-token-valude');
+    stmt.run(email, role, invitetoken);
 
     const allData = db.prepare('SELECT * FROM invites').all();
 
@@ -31,7 +33,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
         {
             status: 'success',
             message: "User invited successfully",
-            data: { email, role , allData}
+            data: { email, role, allData }
         },
         { status: 201 }
     );

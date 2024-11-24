@@ -35,7 +35,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
     const user = stmt.get(email) as User;
 
     if (!user) {
-        throw new AppError("No user found with this email address", 401);
+        throw new AppError("No user found with this email address", 404);
     };
 
     // Verify the password

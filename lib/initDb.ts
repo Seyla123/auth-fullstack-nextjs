@@ -45,7 +45,7 @@ export const initDb = async () => {
   const admin = db.prepare('SELECT * FROM users WHERE email = ?').get('admin@mail.com');
   const hashedPassword = await bcrypt.hash('admin758@', 12);
   if (!admin) {
-    db.prepare('INSERT INTO users (username, email, role, password, emailVerified) VALUES (?, ?, ?, ?, ?)').run('Admin', 'admin@mail.com', 'admin', hashedPassword, 'true');
+    db.prepare('INSERT INTO users (username, email, role, password, emailVerified) VALUES (?, ?, ?, ?, ?)').run('Admin2', 'admin2@mail.com', 'admin', hashedPassword, 'true');
   }
   console.log('Database initialized');
 };
