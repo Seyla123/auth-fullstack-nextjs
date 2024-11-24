@@ -22,14 +22,16 @@ export const POST = catchAsync(async (req: NextRequest) => {
     // const stmt = db.prepare(`INSERT INTO users (email, role) VALUES (?, ?)`);
     // stmt.run(email, role);
     const stmt = db.prepare(`INSERT INTO invites (email, role, inviteToken) VALUES (?, ?,?)`);
-    stmt.run(email, role, 'unique-token-value');
+    stmt.run(email, role, 'unique-token-valude');
+
+    const allData = db.prepare('SELECT * FROM invites').all();
 
     // Return a successful response
     return NextResponse.json(
         {
             status: 'success',
             message: "User invited successfully",
-            data: { email, role }
+            data: { email, role , allData}
         },
         { status: 201 }
     );

@@ -28,7 +28,7 @@ export const initDb = async () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT NOT NULL, 
       role TEXT NOT NULL CHECK(role IN ('user', 'admin')), 
-      inviteToken TEXT UNIQUE NOT NULL,  
+      inviteToken TEXT NOT NULL,  
       status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'accepted', 'expired')),  
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
