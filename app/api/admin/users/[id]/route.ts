@@ -15,6 +15,7 @@ const deleteUser = async (id: string): Promise<boolean> => {
         throw new Error("Database error while deleting user");
     }
 };
+
 export async function DELETE(req:NextRequest,  { params }: { params: { id: string } }
 ) {
     try {
