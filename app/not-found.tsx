@@ -2,7 +2,8 @@ import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-
+import NotFoundImage from '@/public/404.png'
+import NotFoundImage2 from '@/public/404-2.png'
 function NotFoundPage() {
   return (
     <section className='lg:h-screen flex justify-center'>
@@ -24,7 +25,7 @@ function NotFoundPage() {
             <div>
               <Image
                 alt="not found"
-                src="https://i.ibb.co/G9DC8S0/404-2.png" 
+                src={NotFoundImage}
                 width={500}
                 height={500}
                 />
@@ -34,7 +35,7 @@ function NotFoundPage() {
         <div>
           <Image
             alt="not found" 
-            src="https://i.ibb.co/ck1SGFJ/Group.png"
+            src={NotFoundImage2}
             width={500}
             height={500}
             />
