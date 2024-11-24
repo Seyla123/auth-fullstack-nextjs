@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useSignupMutation } from '@/lib/client/services/authApi' // Make sure to import the mutation hook
 import Loading from '@/components/Loading'
 import { ErrorDataType } from '../../sign-in/[[...sign-in]]/page'
+import Link from 'next/link'
 
 function Signup() {
   const { toast } = useToast()
@@ -44,8 +45,8 @@ function Signup() {
   }
 
   return (
-    <main className='flex min-h-screen items-center justify-center'>
-      <section className='shadow-lg py-6 px-4 rounded max-w-sm w-full'>
+    <main className='flex min-h-screen items-center justify-center '>
+      <section className='shadow-lg py-6 px-4 rounded max-w-sm w-full bg-white'>
         <h1 className='text-3xl text-center font-bold mb-4'>
           Join Us
         </h1>
@@ -98,9 +99,15 @@ function Signup() {
             ) : 'Sign up'}
           </Button>
         </form>
+        <Link href='/sign-in'>
+          <p className='text-center text-sm mt-4'>
+            Already have an account? Sign in
+          </p>
+        </Link>
       </section>
     </main>
   )
 }
 
 export default Signup;
+

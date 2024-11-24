@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import { useSigninMutation } from '@/lib/client/services/authApi'
 import Loading from '@/components/Loading'
+import Link from 'next/link'
 
 export type ErrorDataType = { data: { message: string } }
 
@@ -34,7 +35,7 @@ function Signin() {
         description: 'You have been successfully signed up!',
       })
       router.push('/')
-    } catch (error : unknown) {
+    } catch (error: unknown) {
       const errorData = error as ErrorDataType;
       toast({
         title: 'Error',
@@ -48,23 +49,26 @@ function Signin() {
   return (
 
     <main className='flex  min-h-screen items-center justify-center'>
-      <section className='shadow-lg py-6 px-4 rounded max-w-sm w-full'>
+      <section className='shadow-lg py-6 px-4 rounded max-w-sm w-full bg-white'>
         <h1 className='text-3xl text-center font-bold mb-4'>
           Sign In
         </h1>
-        <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4'>
-          <div className='grid w-full  items-center gap-1.5'>
+        <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4 '>
+          <div className='grid w-full   items-center gap-1.5'>
             <Label htmlFor='email'>
               Email
             </Label>
-            <Input
-              placeholder='example@mail.com'
-              type='text'
-              {...register('email')}
-              className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.email })}
-            />
-            {/* {errors?.email && <p className="text-red-500 text-[12px]">{errors.email}</p>} */}
-            {errors.email && <span className="text-red-500 text-[12px]">{String(errors?.email?.message)}</span>}
+            <div>
+              <Input
+                placeholder='example@mail.com'
+                type='text'
+                {...register('email')}
+                className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.email })}
+              />
+              {/* {errors?.email && <p className="text-red-500 text-[12px]">{errors.email}</p>} */}
+              {errors.email && <span className="text-red-500 text-[12px]">{String(errors?.email?.message)}</span>}
+
+            </div>
 
           </div>
           <div className='grid w-full  items-center gap-1.5'>
@@ -90,6 +94,11 @@ function Signin() {
             ) : 'Sign in'}
           </Button>
         </form>
+        <Link href='/sign-up'>
+          <p className='text-center text-sm mt-4'>
+            Don&apos;t have an account? Sign up
+          </p>
+        </Link>
       </section>
     </main>
   )

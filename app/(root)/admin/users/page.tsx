@@ -17,6 +17,20 @@ import { AuthState } from "@/lib/client/stores/slices/authSlice";
 import { useDeleteUserMutation } from "@/lib/client/services/admin/userApi"
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 import { ErrorDataType } from "@/app/(auth)/sign-in/[[...sign-in]]/page";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { InviteUserFormSchema, InviteUserFormValues } from "@/lib/definitions";
+
 export default function Home() {
   // Get the authenticated user from the Redux store
   const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user);
@@ -34,8 +48,17 @@ export default function Home() {
 
   // State to control the visibility of the delete confirmation modal
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [isInviteUserOpen, setIsInviteUserOpen] = useState<boolean>(false);
   // State to store the ID of the user to be deleted
   const [itemDeleteOne, setItemDeleteOne] = useState<string | number>('');
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<InviteUserFormValues>({
+    resolver: zodResolver(InviteUserFormSchema),
+  });
 
   useEffect(() => {
     if (users && isSuccess) {
@@ -60,7 +83,7 @@ export default function Home() {
         title: 'Delete Success',
         description: 'User deleted successfully',
       })
-    } catch (error:unknown) {
+    } catch (error: unknown) {
       const errorData = error as ErrorDataType;
       toast({
         title: 'Failed to delete user',
@@ -103,6 +126,64 @@ export default function Home() {
     setIsDeleteModalOpen(true);
   }
 
+  // Function to handle form submission
+  const submitInvite = (data: InviteUserFormValues) => {
+    console.log("Submitted Data:", data);
+    // Perform your API call or logic here
+  };
+
+  // Handle form submission with preventDefault
+  const onSubmit = handleSubmit(submitInvite);
+  const InviteUser = () => {
+    return (
+      <Dialog open={isInviteUserOpen} onOpenChange={() => setIsInviteUserOpen(false)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <form onSubmit={onSubmit}>
+            <DialogHeader>
+              <DialogTitle>Invite user</DialogTitle>
+              <DialogDescription>
+                Enter the user email and click save. The user will receive an invitation email to join the app.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="flex w-full items-end flex-col">
+                <div className="grid grid-cols-4 items-center gap-4 w-full">
+                  <Label htmlFor="email" className="text-right">
+                    Emaill
+                  </Label>
+                  <Input
+                    placeholder="example@example.com"
+                    {...register('email')}
+                    className={cn('col-span-3 focus-visible:ring-0 focus-visible:ring-offset-0', { 'border-red-500': errors?.email })}
+                  />
+                </div>
+                {errors.email && <span className="text-red-500 text-[12px]">{String(errors?.email?.message)}</span>}
+              </div>
+              <div className="flex w-full items-end flex-col">
+                <div className="grid grid-cols-4 items-center gap-4 w-full">
+                  <Label htmlFor="role" className="text-right">
+                    Role
+                  </Label>
+                  <Input
+                    {...register('role')}
+                    placeholder="enter user role"
+                    defaultValue="user"
+                    className={cn('col-span-3 focus-visible:ring-0 focus-visible:ring-offset-0', { 'border-red-500': errors?.role })}
+                  />
+                </div>
+                {errors.role && <span className="text-red-500 text-[12px]">{String(errors?.role?.message)}</span>}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant={"outline"} onClick={() => setIsInviteUserOpen(false)}>Cancel</Button>
+              <Button type="submit">Send Invitation</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   return (
     <main className=" py-6 flex flex-col gap-2 px-4">
       <h2>Hi {userAuth?.username}, Welcome to the Home</h2>
@@ -111,11 +192,11 @@ export default function Home() {
           placeholder="search"
           className="max-w-sm  focus-visible:ring-0 focus-visible:ring-offset-0"
         />
-        <Link href="/sign-up">
-          <Button className="bg-dark-4">
-            Add User <Plus />
-          </Button>
-        </Link>
+
+        <Button className="bg-dark-4" onClick={() => setIsInviteUserOpen(true)}>
+          <Plus />Add User
+        </Button>
+
       </div>
       <section className="rounded-md border">
         <Table >
@@ -188,8 +269,12 @@ export default function Home() {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={() => deleteUser(itemDeleteOne)}
       />
+      {/* modal invite user */}
+      {InviteUser()}
     </main>
   );
 }
+
+
 
 

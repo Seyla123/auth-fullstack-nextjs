@@ -1,7 +1,7 @@
 //@typescript-eslint/no-explicit-any
 'use server'
 import { db } from "@/lib/initDb";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 // Delete user helper function
 const deleteUser = async (id: string): Promise<boolean> => {
@@ -15,7 +15,7 @@ const deleteUser = async (id: string): Promise<boolean> => {
         throw new Error("Database error while deleting user");
     }
 };
-export async function DELETE( { params }: { params: { id: string } }
+export async function DELETE(req:NextRequest,  { params }: { params: { id: string } }
 ) {
     try {
         const id = params.id;

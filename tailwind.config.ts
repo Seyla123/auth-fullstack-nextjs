@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-
 export default {
 	darkMode: ["class"],
 	content: [
@@ -9,6 +8,9 @@ export default {
 	],
 	theme: {
 		extend: {
+			backgroundImage: {
+				'auth': 'var(--signin-signup-background)',
+			},
 			colors: {
 				dark: {
 					'1': '#1C1F2E',
