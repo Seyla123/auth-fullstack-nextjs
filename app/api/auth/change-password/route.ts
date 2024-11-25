@@ -3,7 +3,7 @@ import { db } from "@/lib/initDb";
 import AppError from "@/lib/server/utils/appError";
 import catchAsync from "@/lib/server/utils/catchAsync";
 import { NextRequest, NextResponse } from "next/server";
-import { User } from "../sign-in/route";
+import { User } from "@/app/api/auth/sign-in/route";
 import { protect } from "@/middlewares/server/authMiddleware";
 import { correctPassword } from "@/lib/server/utils/authUtils";
 import bcrypt from "bcryptjs";

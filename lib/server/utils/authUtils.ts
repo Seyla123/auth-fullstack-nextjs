@@ -72,7 +72,12 @@ const createVerificationToken = () => {
 
     return { token, hashedToken };
 }
-
+const hashedToken = (token: string) => {
+    return crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+}
 export const verifyInvite = async (token: string) => {
     const hashedToken = crypto
         .createHash('sha256')
@@ -106,5 +111,7 @@ export const verifyInvite = async (token: string) => {
 
     return invitedUser;
 };
-export { signToken, createSendToken, createVerificationToken, correctPassword };
+
+
+export { signToken, createSendToken, createVerificationToken, correctPassword , hashedToken } ;
 
