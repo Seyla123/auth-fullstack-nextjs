@@ -16,7 +16,7 @@ export const initDb = async () => {
       email TEXT NOT NULL UNIQUE,
       role TEXT NOT NULL DEFAULT 'user',
       password TEXT NOT NULL,
-      oldPassword TEXT NOT NULL,
+      oldPassword TEXT NULL,
       passwordChangedAt DATETIME,
       active TEXT NOT NULL DEFAULT 'true',
       emailVerificationToken TEXT,
@@ -26,10 +26,11 @@ export const initDb = async () => {
       passwordResetExpiresAt DATETIME,
       passwordResetRequest INTEGER DEFAULT 0,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updatedAt DATETIME,
+      updatedAt DATETIME
     )
   `);
-  const dropTable = db.prepare('DROP TABLE IF EXISTS invites');
+  const dropTableInvite = db.prepare('DROP TABLE IF EXISTS invites');
+  const dropTableUsers = db.prepare('DROP TABLE IF EXISTS users');
   const createInvitesTable = db.prepare(`
     CREATE TABLE IF NOT EXISTS invites (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,6 +46,7 @@ export const initDb = async () => {
   `);
 
   try {
+
     createUsersTable.run(); // Only call once
     createInvitesTable.run();
   } catch (error) {
@@ -53,8 +55,8 @@ export const initDb = async () => {
 
   // Add one admin if that admin does not exist yet
   const admin = db.prepare('SELECT * FROM users WHERE email = ?').get('admin@mail.com');
-  const hashedPassword = await bcrypt.hash('admin758@', 12);
   if (!admin) {
+    const hashedPassword = bcrypt.hashSync('admin758@', 12);
     db.prepare('INSERT INTO users (username, email, role, password, emailVerified) VALUES (?, ?, ?, ?, ?)').run('Admin', 'admin@mail.com', 'admin', hashedPassword, 'true');
   }
   console.log('Database initialized');
