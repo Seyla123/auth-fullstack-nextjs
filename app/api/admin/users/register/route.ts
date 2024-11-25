@@ -47,11 +47,11 @@ export const POST = catchAsync(async (req: NextRequest) => {
         return NextResponse.json({
             status: 'success',
             message: 'Data received successfully',
-            data: validatedData.data,
-            inviteToken: {
+            data: {
+                username,
                 email: inviteToken.email,
-                role: inviteToken.role,
-            }  // The received data is returned in the response body.
+                role: inviteToken.role
+            }
         }, { status: 200, })
     } catch (error) {
         if (process.env.NODE_ENV === 'production') {
