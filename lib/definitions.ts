@@ -37,13 +37,18 @@ export type SigninFormValues = z.infer<typeof SigninFormSchema>;
 // Invite User schema  and type
 export const InviteUserFormSchema = z.object({
   email: emailSchema,
-  role:  z.string({ required_error: "role is required." })
-  .min(1, { message: 'Please enter user role.' })
+  role: z.string({ required_error: "role is required." })
+    .min(1, { message: 'Please enter user role.' })
 
 });
 export type InviteUserFormValues = z.infer<typeof InviteUserFormSchema>;
 
-
+// Register User by invitation schema and type
+export const RegisterUserByInviteFormSchema = z.object({
+  username: usernameSchema,
+  password: passwordSchema,
+});
+export type RegisterUserByInviteFormValues = z.infer<typeof RegisterUserByInviteFormSchema>;
 export type FormState =
   | {
     errors?: {

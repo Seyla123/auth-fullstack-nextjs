@@ -11,6 +11,7 @@ export type invitedUser = {
     role: string;
     inviteToken: string;
     expiredAt: string;
+    status: string;
 }
 const signToken = (id: string | number): string =>
     jwt.sign({ id }, process.env.JWT_SECRET as string, {
@@ -77,6 +78,10 @@ export const verifyInvite = async (token: string) => {
     if (new Date() > new Date(invitedUser.expiredAt)) {
         throw new AppError('Invite token has expired', 401);
     }
+
+    if(invitedUser.status == 'expired') throw new AppError('Invite token has expired', 401);
+
+    if(invitedUser.status == 'accepted') throw new AppError('Invite token has already been used', 401);
 
     return invitedUser;
 };

@@ -38,16 +38,16 @@ export const POST = catchAsync(async (req: NextRequest) => {
       { message: "User created successfully", data: createdUser },
       { status: 201 }
     );
-  } catch (error: any) {
-    if (error.message.includes("UNIQUE constraint failed")) {
-      if (error.message.includes("users.email")) {
+  } catch (error) {
+    if ((error as Error).message.includes("UNIQUE constraint failed")) {
+      if ((error as Error).message.includes("users.email")) {
         throw new AppError("Email already exists. Please use a different email.", 400);
       }
-      if (error.message.includes("users.username")) {
+      if ((error as Error).message.includes("users.username")) {
         throw new AppError("Username already exists. Please use a different username.", 400);
       }
     }
     // Rethrow other errors
-    throw new error;
+    throw error ;
   }
 });

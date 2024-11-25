@@ -5,19 +5,6 @@ import AppError from "@/lib/server/utils/appError";
 import catchAsync from "@/lib/server/utils/catchAsync";
 import { NextRequest, NextResponse } from "next/server";
 
-// Delete user helper function
-const deleteUser = async (id: string): Promise<boolean> => {
-    try {
-        const stmt = db.prepare("DELETE FROM users WHERE id = ?");
-        const result = stmt.run(id);
-        // Assuming `result.changes` indicates the number of rows affected
-        return result.changes > 0;
-    } catch (error) {
-        console.error("Error deleting user:", error);
-        throw new Error("Database error while deleting user");
-    }
-};
-
 export const DELETE = catchAsync(async (req: NextRequest, { params }: { params: { id: string } }) => {
 
     const id = params.id;

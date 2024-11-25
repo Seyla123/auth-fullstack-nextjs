@@ -26,7 +26,7 @@ export const initDb = async () => {
   const createInvitesTable = db.prepare(`
     CREATE TABLE IF NOT EXISTS invites (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL, 
+      email TEXT NOT NULL UNIQUE, 
       role TEXT NOT NULL CHECK(role IN ('user', 'admin')), 
       inviteToken TEXT NOT NULL,  
       status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'accepted', 'expired')),  
@@ -46,7 +46,7 @@ export const initDb = async () => {
   const admin = db.prepare('SELECT * FROM users WHERE email = ?').get('admin@mail.com');
   const hashedPassword = await bcrypt.hash('admin758@', 12);
   if (!admin) {
-    db.prepare('INSERT INTO users (username, email, role, password, emailVerified) VALUES (?, ?, ?, ?, ?)').run('Admin2', 'admin2@mail.com', 'admin', hashedPassword, 'true');
+    db.prepare('INSERT INTO users (username, email, role, password, emailVerified) VALUES (?, ?, ?, ?, ?)').run('Admin', 'admin@mail.com', 'admin', hashedPassword, 'true');
   }
   console.log('Database initialized');
 };
