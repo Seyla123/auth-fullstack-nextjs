@@ -5,11 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 import { ErrorDataType } from "@/app/(auth)/sign-in/[[...sign-in]]/page";
 
-
-import {
-    useDeleteUserMutation,
-} from "@/lib/client/services/admin/userApi";
-import { useGetAllInviteUsersQuery } from "@/lib/client/services/admin/inviteUserApi";
+import { useGetAllInviteUsersQuery, useDeleteInvitedUserMutation } from "@/lib/client/services/admin/inviteUserApi";
 import { TableComponent } from "@/components/TableComponent";
 import Header from '@/app/(root)/admin/_header'
 import { invitedUser } from "@/lib/server/utils/authUtils";
@@ -19,8 +15,8 @@ export default function Home() {
     // useGetAllUsersQuery : hook to fetch user data
     const { data: users, isSuccess, isLoading } = useGetAllInviteUsersQuery();
     // useDeleteUserMutation : Mutation hook to handle user deletion
-    const [deleteOneUser, { isLoading: isDeleteLoading }] =
-        useDeleteUserMutation();
+    const [deleteOneInvitedUser, { isLoading: isDeleteLoading }] =
+        useDeleteInvitedUserMutation();
 
 
     // state for users data
@@ -30,7 +26,7 @@ export default function Home() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
     // State to store the ID of the user to be deleted
-    const [selectedUserId, setSelectedUserId] = useState<string | number>("");
+    const [selectedInvitedUserId, setSelectedInvitedUserId] = useState<string | number>("");
 
 
     useEffect(() => {
@@ -49,9 +45,9 @@ export default function Home() {
     }, [isDeleteLoading]);
 
     //function to delete one user
-    const deleteUser = async (id: string | number) => {
+    const deleteInvitedUser = async (id: string | number) => {
         try {
-            await deleteOneUser(id).unwrap();
+            await deleteOneInvitedUser(id).unwrap();
             toast({
                 title: "Delete Success",
                 description: "User deleted successfully",
@@ -68,16 +64,16 @@ export default function Home() {
 
     // handle click on delete one user and open confirm modal
     const handleDelete = (id: string | number) => {
-        setSelectedUserId(id);
+        setSelectedInvitedUserId(id);
         setIsDeleteModalOpen(true);
     };
 
     const handleView = (id: string) => {
-        setSelectedUserId(id);
+        setSelectedInvitedUserId(id);
         setIsDeleteModalOpen(true);
     }
     const handleEdit = (id: string) => {
-        setSelectedUserId(id);
+        setSelectedInvitedUserId(id);
         setIsDeleteModalOpen(true);
     }
     return (
@@ -94,8 +90,9 @@ export default function Home() {
             />
             <ConfirmDialog
                 isOpen={isDeleteModalOpen}
+                description={<>This action cannot be undone. This will permanently <b>delete this invitation user</b>  and remove data from our servers.</>}
                 onClose={() => setIsDeleteModalOpen(false)}
-                onConfirm={() => deleteUser(selectedUserId)}
+                onConfirm={() => deleteInvitedUser(selectedInvitedUserId)}
             />
         </>
     );

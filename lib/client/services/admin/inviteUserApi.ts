@@ -2,6 +2,7 @@ import { User } from '@/app/api/auth/sign-in/route';
 import { baseApi } from '@/lib/client/services/baseApi';
 import { InviteUserFormValues } from '@/lib/definitions';
 import { invitedUser } from '@/lib/server/utils/authUtils';
+import { DeleteUserResponse } from './userApi';
 
 interface DefaultResponse {
     total: number;
@@ -54,6 +55,14 @@ export const inviteUserApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Invite'],
         }),
+        deleteInvitedUser: builder.mutation<DeleteUserResponse, void>({
+            query: (id) => ({
+                url: `/admin/users/invite/${id}`,
+                method: 'DELETE',
+                credentials: 'include',
+            }),
+            invalidatesTags: ['Invite'],
+        }),
     }),
     overrideExisting: false,
 });
@@ -61,5 +70,6 @@ export const inviteUserApi = baseApi.injectEndpoints({
 export const {
     useGetAllInviteUsersQuery,
     useInviteUserMutation,
-    useVerifyInviteUserMutation
+    useVerifyInviteUserMutation,
+    useDeleteInvitedUserMutation
 } = inviteUserApi;
