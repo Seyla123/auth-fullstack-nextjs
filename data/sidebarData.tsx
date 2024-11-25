@@ -45,7 +45,7 @@ export const data = {
                 },
                 {
                     title: "Invited Users",
-                    url: "/admin/users/invite",
+                    url: "/admin/invites",
                 },
             ],
         },
