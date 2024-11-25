@@ -49,7 +49,6 @@ export type ForgotPasswordFormValues = z.infer<typeof ForgotPasswordFormSchema>;
 
 // Sign up schema and type
 export const ResetPasswordFormSchema = z.object({
-  currentPassword: passwordSchema,
   newPassword: passwordSchema,
 });
 export type ResetPasswordFormValues = z.infer<typeof ResetPasswordFormSchema>;
