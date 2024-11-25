@@ -60,3 +60,45 @@ export const GET = catchAsync(async () => {
     return NextResponse.json({ status: 'success', message: "Fetching successfully", data: allData }, { status: 200 });
 });
 
+export const DELETE = catchAsync(async (req: NextRequest) => {
+    try {
+        const data = await req.json();
+
+        // Validate input
+        if (!data || !data.ids || !Array.isArray(data.ids) || data.ids.length === 0) {
+            throw new AppError('Field "ids" is required and must be a non-empty array', 400);
+        }
+
+        // Start a transaction
+        db.exec('BEGIN TRANSACTION');
+
+        // Dynamically create placeholders for the number of IDs
+        const placeholders = data.ids.map(() => '?').join(', ');
+
+        // Execute delete query
+        const stmt = db.prepare(`DELETE FROM invites WHERE id IN (${placeholders})`);
+        const result = stmt.run(...data.ids);
+
+        // Check if any rows were affected
+        if (!result.changes) {
+            db.exec('ROLLBACK');
+            throw new AppError(`Failed to delete users with IDs ${data.ids.join(', ')}`, 400);
+        }
+
+        // Commit the transaction
+        db.exec('COMMIT');
+
+        // Respond with success
+        return NextResponse.json({
+            status: 'success',
+            message: `Users with IDs ${data.ids.join(', ')} deleted successfully`,
+            data
+        }, { status: 200 });
+    } catch (error) {
+        // Ensure rollback on error
+        db.exec('ROLLBACK');
+        console.error(error);
+        throw new AppError((error as Error).message || 'Failed to delete users', 400);
+    }
+});
+

@@ -23,7 +23,7 @@ type InviteUserResponse = {
 interface VerifyUserResponse {
     status: string;
     message: string;
-    data:invitedUser
+    data: invitedUser
 }
 
 
@@ -42,7 +42,7 @@ export const inviteUserApi = baseApi.injectEndpoints({
             query: (data) => ({
                 url: `/admin/users/invite`,
                 method: 'POST',
-                body:data,
+                body: data,
                 credentials: 'include',
             }),
             invalidatesTags: ['Invite'],
@@ -55,7 +55,7 @@ export const inviteUserApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Invite'],
         }),
-        deleteInvitedUser: builder.mutation<DeleteUserResponse, string|number>({
+        deleteInvitedUser: builder.mutation<DeleteUserResponse, string | number>({
             query: (id) => ({
                 url: `/admin/users/invite/${id}`,
                 method: 'DELETE',
@@ -63,6 +63,17 @@ export const inviteUserApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Invite'],
         }),
+        deleteManyInvitedUser: builder.mutation<DeleteUserResponse, string[]>({
+            query: (ids) => ({
+                url: `/admin/users/invite`,
+                method: 'DELETE',
+                body: {
+                    "ids": ids
+                },
+                credentials: 'include',
+            }),
+            invalidatesTags: ['Invite'],
+        })
     }),
     overrideExisting: false,
 });
@@ -71,5 +82,6 @@ export const {
     useGetAllInviteUsersQuery,
     useInviteUserMutation,
     useVerifyInviteUserMutation,
-    useDeleteInvitedUserMutation
+    useDeleteInvitedUserMutation,
+    useDeleteManyInvitedUserMutation
 } = inviteUserApi;

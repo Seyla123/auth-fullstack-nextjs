@@ -21,17 +21,14 @@ export default function Home() {
   const [deleteOneUser, { isLoading: isDeleteLoading }] =
     useDeleteUserMutation();
 
-
   // state for users data
   const [usersData, setUsersData] = useState<User[]>([]);
-
 
   // State to control the visibility of the delete confirmation modal
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
   // State to store the ID of the user to be deleted
   const [selectedUserId, setSelectedUserId] = useState<string | number>("");
-
 
   useEffect(() => {
     if (users && isSuccess) {
@@ -59,8 +56,8 @@ export default function Home() {
     } catch (error: unknown) {
       const errorData = error as ErrorDataType;
       toast({
-        title: "Failed to delete user",
-        description: errorData?.data?.message || "Failed to delete user",
+        title: "Failed to Delete user",
+        description: errorData?.data?.message || "Some error occurred",
         variant: "destructive",
       });
     }
