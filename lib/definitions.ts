@@ -53,7 +53,11 @@ export const ResetPasswordFormSchema = z.object({
 });
 export type ResetPasswordFormValues = z.infer<typeof ResetPasswordFormSchema>;
 
-
+// Sign up schema and type
+export const ResendVerificationFormSchema = z.object({
+  email: emailSchema,
+});
+export type ResendVerificationFormValues = z.infer<typeof ResendVerificationFormSchema>;
 // Invite User schema  and type
 export const InviteUserFormSchema = z.object({
   email: emailSchema,
