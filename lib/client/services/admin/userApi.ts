@@ -32,7 +32,6 @@ export const userApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Users'],
         }),
-
     }),
     overrideExisting: false,
 });

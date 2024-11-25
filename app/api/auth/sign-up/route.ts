@@ -3,59 +3,51 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/initDb";
 import { SignupFormSchema } from "@/lib/definitions";
 import bcrypt from "bcryptjs";
+import catchAsync from "@/lib/server/utils/catchAsync";
+import AppError from "@/lib/server/utils/appError";
 
+export const POST = catchAsync(async (req: NextRequest) => {
+  // Read the request body
+  const data = await req.json();
 
-export async function POST(req: NextRequest) {
+  // Validate the request body and extract the data
+  const validatedData = SignupFormSchema.safeParse(data);
+  if (!validatedData.success) {
+    throw new AppError(validatedData.error.issues[0].message, 400);
+  }
+
+  // Extract the validated data
+  const { username, email, password } = validatedData.data;
+
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, 12);
+
   try {
-
-    // read the request body
-    const data = await req.json();
-
-    // validate the request body and extract the data
-    const validatedData = SignupFormSchema.safeParse(data)
-    if (!validatedData.success) {
-
-      // Respond with validation messages
-      const firstIssue = validatedData.error.issues[0];
-      return NextResponse.json(
-        { message: firstIssue.message },
-        { status: 400 }
-      );
-    }
-    // extract the validated data
-    const { username, email, password } = validatedData.data;
-
-    // hash the password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // insert the user into the database
+    // Insert the user into the database
     const stmt = db.prepare(
-      "INSERT INTO users (username , email, password) VALUES (?, ?, ?)"
+      "INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
     );
     stmt.run(username, email, hashedPassword);
 
-    // get the created data user
+    // Get the created user data
     const user = db.prepare("SELECT * FROM users WHERE email = ? ");
-    const users = user.get(email);
+    const createdUser = user.get(email);
 
-    // return the newly created user and all users
+    // Return the newly created user
     return NextResponse.json(
-      { message: "Data received successfully", data: users },
+      { message: "User created successfully", data: createdUser },
       { status: 201 }
     );
-  } catch (error: unknown) {
-    // Handle SQLite-specific errors (e.g., constraint violations)
-    if (error instanceof Error && error.message.includes("UNIQUE constraint failed")) {
-      return NextResponse.json(
-        { message: "A user with this email already exists" },
-        { status: 400 } // Bad Request
-      );
+  } catch (error) {
+    if ((error as Error).message.includes("UNIQUE constraint failed")) {
+      if ((error as Error).message.includes("users.email")) {
+        throw new AppError("Email already exists. Please use a different email.", 400);
+      }
+      if ((error as Error).message.includes("users.username")) {
+        throw new AppError("Username already exists. Please use a different username.", 400);
+      }
     }
-
-    // Default error response for unexpected errors
-    return NextResponse.json(
-      { message: error instanceof Error ? error.message : "An error occurred while creating the user" },
-      { status: 500 } // Internal Server Error
-    );
+    // Rethrow other errors
+    throw error ;
   }
-}
+});

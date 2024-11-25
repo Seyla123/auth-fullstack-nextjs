@@ -15,7 +15,7 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     const userRoute = ['/users'];
     // Track loading and redirection state
     const [isRedirecting, setIsRedirecting] = useState(true);
-
+    
     console.log('pathname ', pathname);
     const { isLoading, isSuccess, error } = useCheckAuthQuery();
     const { isAuthenticated, user } = useSelector((state: { auth: AuthState }) => state.auth);

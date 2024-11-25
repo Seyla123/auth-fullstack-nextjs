@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken"; // Install with `npm install jsonwebtoken`
 import { db } from "@/lib/initDb";
+import AppError from "@/lib/server/utils/appError";
 
 export const protect = (req: NextRequest) => {
   let token;
@@ -17,18 +18,17 @@ export const protect = (req: NextRequest) => {
   console.log('this is token', token);
 
   // 2. If token is found
-  if (!token) throw new Error("Not authorized to access this route")
+  if (!token) throw new AppError("You are not logged in! Please log in to get access.", 401)
 
 
   // 3. Verify token
   const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
-  if (!decoded) throw new Error("Invalid or expired token")
+  if (!decoded) throw new AppError("Invalid or expired token", 401)
 
   // If token is valid, attach user info to the request
   const stmt = db.prepare('SELECT id, username ,email, role, active, emailVerified FROM users WHERE id = ?');
   const currentUser = stmt.get(decoded.id)
-
-  if (!currentUser) throw new Error('The user belonging to this token no longer exists.')
+  if (!currentUser) throw new AppError('The user belonging to this token no longer exists.', 401)
 
   req.headers.set("user", JSON.stringify(currentUser));
 

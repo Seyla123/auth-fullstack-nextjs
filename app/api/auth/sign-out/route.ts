@@ -2,8 +2,9 @@
 import { NextResponse, NextRequest } from "next/server";
 import { cookies } from 'next/headers';
 import { protect } from "@/middlewares/server/authMiddleware";
-
-export async function POST(req: NextRequest) {
+import AppError from "@/lib/server/utils/appError";
+import catchAsync from "@/lib/server/utils/catchAsync";
+export const POST = catchAsync(async (req: NextRequest) => {
     try {
         protect(req);
         const cookieStore = await cookies();
@@ -23,9 +24,6 @@ export async function POST(req: NextRequest) {
             message: 'User logged out successfully'
         }, { status: 200 });
     } catch (error: unknown) {
-        return NextResponse.json({
-            status: 'fail',
-            message: error instanceof Error ? error.message  : 'Failed to logout'
-        }, { status: 500 });
+        throw new AppError(error instanceof Error ? error.message : 'Failed to logout', 401);
     }
-}
+});

@@ -29,12 +29,18 @@ function Signin() {
 
   const onSubmit = async (data: SigninFormValues) => {
     try {
-      await signin(data).unwrap();
+      const response = await signin(data).unwrap();
       toast({
         title: 'Success',
         description: 'You have been successfully signed up!',
       })
-      router.push('/')
+      console.log('this role :', response);
+      
+      if(response?.data?.role == 'admin'){
+        router.push('/admin/users')
+      }else{
+        router.push('/users')
+      }
     } catch (error: unknown) {
       const errorData = error as ErrorDataType;
       toast({
