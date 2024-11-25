@@ -59,5 +59,6 @@ export const PATCH = catchAsync(async (req: NextRequest) => {
         throw new AppError("Failed to update password for the user", 400);
     }
 
+    // sign cookies 
     return createSendToken(user, 200, req);
 });
