@@ -4,7 +4,7 @@ import * as React from "react"
 import {
   AudioWaveform,
   BookOpen,
-  Bot,
+  UsersRound,
   Command,
   Frame,
   GalleryVerticalEnd,
@@ -54,6 +54,21 @@ const data = {
   ],
   navMain: [
     {
+      title: "User Management",
+      url: "#",
+      icon: UsersRound,
+      items: [
+        {
+          title: "List of Users",
+          url: "/admin/users",
+        },
+        {
+          title: "Invited Users",
+          url: "/admin/users/invite",
+        },
+      ],
+    },
+    {
       title: "Playground",
       url: "#",
       icon: SquareTerminal,
@@ -73,25 +88,7 @@ const data = {
         },
       ],
     },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
+
     {
       title: "Documentation",
       url: "#",
