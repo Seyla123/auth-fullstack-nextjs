@@ -18,7 +18,8 @@ export const POST = catchAsync(async (req: NextRequest) => {
         }
 
         const { username, password } = validatedData.data;
-
+        // Start a transaction
+        db.exec('BEGIN TRANSACTION');
         const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(inviteToken.email);
         if (user) {
             throw new AppError('User already exists with this email address', 409);
@@ -26,8 +27,6 @@ export const POST = catchAsync(async (req: NextRequest) => {
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        // Start a transaction
-        db.exec('BEGIN TRANSACTION');
         const stmt = db.prepare(`INSERT INTO users (username, email, password, role, emailVerified) VALUES (?,?,?,?,?)`);
         const result = stmt.run(username, inviteToken.email, hashedPassword, inviteToken.role, 'true');
         if (!(result.changes > 0)) {
@@ -54,6 +53,11 @@ export const POST = catchAsync(async (req: NextRequest) => {
             }
         }, { status: 200, })
     } catch (error) {
+        if ((error as Error).message.includes("UNIQUE constraint failed")) {
+            if ((error as Error).message.includes("users.username")) {
+                throw new AppError("Username already exists. Please use a different username.", 400);
+            }
+        }
         if (process.env.NODE_ENV === 'production') {
             console.log(error);
             throw new AppError('Fail to register user', 400);

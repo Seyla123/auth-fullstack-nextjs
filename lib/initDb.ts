@@ -22,7 +22,7 @@ export const initDb = async () => {
       updatedAt DATETIME
     )
   `);
-
+  const dropTable= db.prepare('DROP TABLE IF EXISTS invites');
   const createInvitesTable = db.prepare(`
     CREATE TABLE IF NOT EXISTS invites (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,7 +31,9 @@ export const initDb = async () => {
       inviteToken TEXT NOT NULL,  
       status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'accepted', 'expired')),  
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-      expiredAt DATETIME
+      expiredAt DATETIME,
+      invitedBy INTEGER,  
+      FOREIGN KEY (invitedBy) REFERENCES users(id) 
     )
   `);
 

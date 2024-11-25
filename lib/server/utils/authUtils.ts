@@ -13,6 +13,9 @@ export type invitedUser = {
     expiredAt: string;
     status: string;
     createdAt: string;
+    invitedByEmail?: string;
+    invitedByUsername?: string;
+    invitedBy?: number | string;
 }
 const signToken = (id: string | number): string =>
     jwt.sign({ id }, process.env.JWT_SECRET as string, {
@@ -76,13 +79,25 @@ export const verifyInvite = async (token: string) => {
         throw new AppError("User not found", 404);
     }
 
-    if (new Date() > new Date(invitedUser.expiredAt)) {
+    // SQLite database has default datetime , so it will be wrong with our current datetime
+    //we have to use the default datetime from the database
+    const expiredAt = new Date(invitedUser.expiredAt);
+    const dateNow = new Date(Date.now())
+    const formattedDateNow = dateNow.toISOString().replace('T', ' ').slice(0, 19);
+
+    // Check if expiredAt is a valid date
+    if (isNaN(expiredAt.getTime())) {
+        throw new AppError('Invalid expiredAt date', 400);
+    }
+
+    // Compare the dates
+    if (new Date(formattedDateNow) > expiredAt) {
         throw new AppError('Invite token has expired', 401);
     }
 
-    if(invitedUser.status == 'expired') throw new AppError('Invite token has expired', 401);
+    if (invitedUser.status == 'expired') throw new AppError('Invite token has expired', 401);
 
-    if(invitedUser.status == 'accepted') throw new AppError('Invite token has already been used', 401);
+    if (invitedUser.status == 'accepted') throw new AppError('Invite token has already been used', 401);
 
     return invitedUser;
 };

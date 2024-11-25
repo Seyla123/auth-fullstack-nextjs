@@ -32,7 +32,6 @@ export default function Home() {
     const [selectedInvitedUserId, setSelectedInvitedUserId] = useState<string | number>("");
     const [selectedManyInvitedUserId, setSelectedManyInvitedUserId] = useState<string[]>([]);
 
-
     useEffect(() => {
         if (users && isSuccess) {
             setUsersData(users?.data);
@@ -104,8 +103,8 @@ export default function Home() {
     return (
         <>
             <TableComponent
-                header={["ID", "Email", "Role", "Status", "Created", "Expires"]}
-                dataColumn={["id", "email", "role", "status", "createdAt", "expiredAt"]}
+                header={["ID", "Email", "Role", "Status", "Created", "Expires","invited by"]}
+                dataColumn={["id", "email", "role", "status", "createdAt", "expiredAt","invitedByUsername"]}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
                 onView={handleView}

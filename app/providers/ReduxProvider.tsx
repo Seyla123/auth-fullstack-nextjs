@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 export function ReduxProvider({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const adminRoute = ['/admin/users','/'];
+    const adminRoute = ['/admin/users', '/admin/invites','/'];
     const userRoute = ['/users'];
 
     // Check if the current route is protected (admin or user routes)

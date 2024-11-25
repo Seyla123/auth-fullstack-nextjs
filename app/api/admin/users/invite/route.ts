@@ -15,7 +15,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
 
         // Read request body and parse JSON data
         const data = await req.json();
-
+        const currentUserId = req.headers.get('userId');
         // Validate data using InviteUserFormSchema
         const validateData = InviteUserFormSchema.safeParse(data);
         if (!validateData.success) {
@@ -28,18 +28,23 @@ export const POST = catchAsync(async (req: NextRequest) => {
         const { token, hashedToken } = createVerificationToken();
         const expiredDate = new Date(Date.now() + 1000 * 60 * 60); // 1 hour from now
         const formattedDate = expiredDate.toISOString().replace('T', ' ').slice(0, 19);
-        const stmt = db.prepare(`INSERT INTO invites (email, role, inviteToken, expiredAt) VALUES (?, ?,?,?)`);
-        stmt.run(email, role, hashedToken, formattedDate);
+        const stmt = db.prepare(`INSERT INTO invites (email, role, inviteToken, expiredAt, invitedBy) VALUES (?, ?,?,?,?)`);
+        stmt.run(email, role, hashedToken, formattedDate, Number(currentUserId));
 
-        const allData = db.prepare('SELECT * FROM invites').all();
+        const allData = db.prepare(`
+            SELECT invites.*,users.username as invitedByUsername, users.email as invitedByEmail
+            FROM invites
+            LEFT JOIN users ON invites.invitedBy = users.id
+          `).all();
 
         // Return a successful response
         return NextResponse.json(
             {
                 status: 'success',
                 message: "User invited successfully",
-                data: { email, role, allData },
-                token
+                data: { email, role, invitedBy: currentUserId, allData },
+                token,
+                date: formattedDate
             },
             { status: 201 }
         );
@@ -56,7 +61,11 @@ export const POST = catchAsync(async (req: NextRequest) => {
 
 
 export const GET = catchAsync(async () => {
-    const allData = db.prepare('SELECT * FROM invites').all();
+    const allData = db.prepare(`
+        SELECT invites.*,users.username as invitedByUsername, users.email as invitedByEmail
+        FROM invites
+        LEFT JOIN users ON invites.invitedBy = users.id
+      `).all();
     return NextResponse.json({ status: 'success', message: "Fetching successfully", data: allData }, { status: 200 });
 });
 
