@@ -3,7 +3,7 @@ import { InviteUserFormSchema } from "@/lib/definitions";
 import { db } from "@/lib/initDb";
 import { NextRequest, NextResponse } from "next/server";
 import catchAsync from "@/lib/server/utils/catchAsync";
-import { createVerificationToken, verifyInvite } from "@/lib/server/utils/authUtils";
+import { createVerificationToken } from "@/lib/server/utils/authUtils";
 
 
 // Wrap your handler with catchAsync
@@ -39,16 +39,8 @@ export const POST = catchAsync(async (req: NextRequest) => {
 });
 
 
-
-export const GET = catchAsync(async (req: NextRequest) => {
-    const { searchParams } = new URL(req.url);
-    const token = searchParams.get('token');
-    if (!token) {
-        throw new AppError("token not provided", 400);
-    }
-
-    const invitedUser = await verifyInvite(token);
-
-    return NextResponse.json({ status: 'success', message: "Verify user invite successfully", data: invitedUser }, { status: 200 });
+export const GET = catchAsync(async () => {
+    const allData = db.prepare('SELECT * FROM invites').all();
+    return NextResponse.json({ status: 'success', message: "Fetching successfully", data: allData }, { status: 200 });
 });
 
