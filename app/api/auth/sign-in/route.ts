@@ -14,6 +14,7 @@ export type User = {
     password: string;
     active: boolean;
     emailVerified: boolean;
+    oldPassword?: string | null;
     passwordChangedAt?: string | null;
     passwordResetToken?: string | null;
     passwordResetExpiresAt?: string | null;
@@ -31,13 +32,32 @@ export const POST = catchAsync(async (req: NextRequest) => {
     const { email, password } = validatedData.data;
 
     // Query database to find the user
-    const stmt = db.prepare("SELECT id,username, email, password, role, active, emailVerified FROM users WHERE email = ?");
+    const stmt = db.prepare(`
+        SELECT 
+            id,
+            username, 
+            email, 
+            password, 
+            role, 
+            active, 
+            emailVerified, 
+            oldPassword FROM users WHERE email = ?    
+    `);
     const user = stmt.get(email) as User;
 
     if (!user) {
         throw new AppError("No user found with this email address", 404);
     };
-
+    console.log(user);
+    
+    if (user.oldPassword) {
+        const isOldPasswordValid = await correctPassword(password, user.oldPassword);
+        console.log(isOldPasswordValid);
+        
+        if (isOldPasswordValid) {
+            throw new AppError("This is old password, please input new password", 401);
+        }
+    }
     // Verify the password
     const isValid = await correctPassword(password, user.password);
     if (!isValid) {

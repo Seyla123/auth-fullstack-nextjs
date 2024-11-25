@@ -56,7 +56,7 @@ export const PATCH = catchAsync(async (req: NextRequest) => {
             passwordChangedAt=?
         WHERE id =?
     `);
-    const result = updatePassword.run(newHashedPassword, 0, currentDate, oldPassword, user.id);
+    const result = updatePassword.run(newHashedPassword, 0, oldPassword, currentDate, user.id);
 
     if (result.changes === 0) {
         throw new AppError("Failed to update password for the user", 400);
