@@ -16,13 +16,20 @@ export const initDb = async () => {
       email TEXT NOT NULL UNIQUE,
       role TEXT NOT NULL DEFAULT 'user',
       password TEXT NOT NULL,
+      oldPassword TEXT NOT NULL,
+      passwordChangedAt DATETIME,
       active TEXT NOT NULL DEFAULT 'true',
-      emailVerified TEXT NOT NULL DEFAULT 'false',      
+      emailVerificationToken TEXT,
+      emailVerifiedExpiresAt DATETIME,
+      emailVerified TEXT NOT NULL DEFAULT 'false', 
+      passwordResetToken TEXT ,
+      passwordResetExpiresAt DATETIME,
+      passwordResetRequest INTEGER DEFAULT 0,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updatedAt DATETIME
+      updatedAt DATETIME,
     )
   `);
-  const dropTable= db.prepare('DROP TABLE IF EXISTS invites');
+  const dropTable = db.prepare('DROP TABLE IF EXISTS invites');
   const createInvitesTable = db.prepare(`
     CREATE TABLE IF NOT EXISTS invites (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
