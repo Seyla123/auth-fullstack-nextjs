@@ -55,7 +55,7 @@ export const inviteUserApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Invite'],
         }),
-        deleteInvitedUser: builder.mutation<DeleteUserResponse, void>({
+        deleteInvitedUser: builder.mutation<DeleteUserResponse, string|number>({
             query: (id) => ({
                 url: `/admin/users/invite/${id}`,
                 method: 'DELETE',

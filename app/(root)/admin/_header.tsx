@@ -1,3 +1,4 @@
+'use client'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import {
@@ -137,15 +138,7 @@ function Header() {
     return (
         <>
             <h2>Hi {userAuth?.username}, Welcome to the Home</h2>
-            <div className="flex flex-row items-center justify-between gap-2">
-                <Input
-                    placeholder="search"
-                    autoCorrect=''
-                    name='search'
-                    id='search'
-                    className="max-w-sm  focus-visible:ring-0 focus-visible:ring-offset-0"
-                />
-
+            <div className="flex flex-row items-end justify-end gap-2">
                 <Button className="bg-dark-4" onClick={() => setIsInviteUserOpen(true)}>
                     <Plus />
                     Invite User

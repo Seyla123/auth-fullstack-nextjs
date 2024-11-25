@@ -12,7 +12,6 @@ import {
   useDeleteUserMutation,
 } from "@/lib/client/services/admin/userApi";
 import { TableComponent } from "@/components/TableComponent";
-import Header from '@/app/(root)/admin/_header'
 
 export default function Home() {
 
@@ -84,7 +83,6 @@ export default function Home() {
 
   return (
     <>
-      <Header/>
       <TableComponent
         header={["ID", "Username", "Email", "Role", "Active"]}
         dataColumn={["id", "username", "email", "role", "active"]}

@@ -7,7 +7,6 @@ import { ErrorDataType } from "@/app/(auth)/sign-in/[[...sign-in]]/page";
 
 import { useGetAllInviteUsersQuery, useDeleteInvitedUserMutation } from "@/lib/client/services/admin/inviteUserApi";
 import { TableComponent } from "@/components/TableComponent";
-import Header from '@/app/(root)/admin/_header'
 import { invitedUser } from "@/lib/server/utils/authUtils";
 
 export default function Home() {
@@ -78,7 +77,6 @@ export default function Home() {
     }
     return (
         <>
-            <Header />
             <TableComponent
                 header={["ID", "Email", "Role", "Status", "Created", "Expires"]}
                 dataColumn={["id", "email", "role", "status", "createdAt", "expiredAt"]}
