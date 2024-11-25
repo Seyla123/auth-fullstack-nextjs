@@ -35,22 +35,23 @@ export const POST = catchAsync(async (req: NextRequest) => {
   })
 
   try {
+    const expiredDate = new Date(Date.now() + 1000 * 60 * 10); // 10 minutes from now
+    const formattedExpiredDate = expiredDate.toISOString().replace('T', ' ').slice(0, 19);
     // Insert the user into the database
     const stmt = db.prepare(`
       INSERT INTO users 
-        (username, email, password, emailVerificationToken) 
-        VALUES (?, ?, ?, ?)
+        (username, email, password, emailVerificationToken, emailVerifiedExpiresAt) 
+        VALUES (?, ?, ?, ?,?)
       `);
-    stmt.run(username, email, hashedPassword, hashedToken);
+    stmt.run(username, email, hashedPassword, hashedToken, formattedExpiredDate);
 
     // Get the created user data
     const user = db.prepare("SELECT * FROM users WHERE email = ? ");
     const createdUser = user.get(email);
-    console.log('token :', hashedToken);
 
     // Return the newly created user
     return NextResponse.json(
-      { message: "User created successfully", data: createdUser, token: hashedToken, jwt:verifyToken },
+      { message: "User created successfully", data: createdUser, token: hashedToken, jwt: verifyToken },
       { status: 201 }
     );
   } catch (error) {

@@ -21,7 +21,12 @@ export async function GET(req: NextRequest) {
                 passwordResetToken,
                 passwordResetExpiresAt,
                 passwordResetRequestDate,
-                passwordResetRequest  from users 
+                passwordResetRequest,
+                emailVerificationToken,
+                emailVerifiedRequestDate,
+                emailVerifiedRequest,
+                emailVerifiedExpiresAt,
+                emailVerified  from users 
         `);
 
         const users = stmt.all();

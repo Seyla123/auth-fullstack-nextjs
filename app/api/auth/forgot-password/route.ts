@@ -25,9 +25,8 @@ export const POST = catchAsync(async (req: NextRequest) => {
     // check if the user request reset many times
     const userRequestTime = user.passwordResetRequest as number;
     const currentDate = new Date().toISOString().slice(0, 10); // Get current date in "YYYY-MM-DD"
-    if (userRequestTime > 2) {
-        const givenDate = '2024-11-25 09:17:46'.slice(0, 10); // Extract date part "YYYY-MM-DD"
-        if (currentDate == givenDate) {
+    if (userRequestTime >= 3) {
+        if (currentDate == user.passwordResetRequestDate) {
             throw new AppError("You've exceeded the allowed number of password reset requests. please try again in 24 hours", 400);
         }
     }

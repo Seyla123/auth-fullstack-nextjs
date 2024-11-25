@@ -26,13 +26,18 @@ export const POST = catchAsync(async (req: NextRequest) => {
         throw new AppError("Token does not match the user's email or username", 401);
     }
 
-    
+    // Update database
+    const updateStmt = db.prepare(`
+        UPDATE users SET 
+            emailVerificationToken = NULL,
+            emailVerifiedExpiresAt = NULL,
+            emailVerifiedRequestDate = NULL,
+            emailVerifiedRequest = ? ,
+            emailVerified = ? WHERE email = ?`);
+    updateStmt.run(0, 'true', stmt.email);
 
     return NextResponse.json({
         status: 'success',
         message: 'Verified email successfully',
-        stmt,
-        decoded,
-        token
     })
 })
