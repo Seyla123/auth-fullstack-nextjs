@@ -6,8 +6,6 @@ import { NextRequest } from "next/server";
 import AppError from "@/lib/server/utils/appError";
 import catchAsync from "@/lib/server/utils/catchAsync";
 
-
-
 export type User = {
     id: number | string;
     username: string;
