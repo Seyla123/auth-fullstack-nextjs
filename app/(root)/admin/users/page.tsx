@@ -81,6 +81,7 @@ export default function Home() {
     setSelectedUserId(id);
     setIsDeleteModalOpen(true);
   }
+
   return (
     <>
       <Header/>

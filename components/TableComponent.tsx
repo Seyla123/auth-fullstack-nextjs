@@ -12,6 +12,7 @@ import {
 import Loading from "@/components/Loading";
 import { DropdownAction } from "@/components/DropdownAction";
 import { Checkbox } from "@/components/ui/checkbox";
+import { invitedUser } from "@/lib/server/utils/authUtils";
 
 export const TableComponent = ({
     header,
@@ -24,7 +25,7 @@ export const TableComponent = ({
   }: {
     header: string[];
     dataColumn: string[];
-    data: User[];
+    data: User[] | invitedUser[];
     isLoading?: boolean;
     onDelete?: (id: string) => void;
     onEdit?: (id: string) => void;
@@ -88,7 +89,7 @@ export const TableComponent = ({
             {isLoading ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={header.length + 2}
                   className="h-[40vh] lg:h-[50vh] text-center"
                 >
                   <Loading />
@@ -123,7 +124,7 @@ export const TableComponent = ({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={header.length + 2}
                   className="h-[40vh] lg:h-[50vh] text-center"
                 >
                   No results.

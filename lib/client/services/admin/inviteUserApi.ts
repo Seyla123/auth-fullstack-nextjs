@@ -7,7 +7,7 @@ interface DefaultResponse {
     total: number;
     status: string;
     message: string;
-    data: User[];
+    data: invitedUser[];
 }
 type InviteUserResponse = {
     status: string;
@@ -31,7 +31,7 @@ export const inviteUserApi = baseApi.injectEndpoints({
         // Signup mutation
         getAllInviteUsers: builder.query<DefaultResponse, void>({
             query: () => ({
-                url: '/admin/users', // Adjust the path as needed
+                url: '/admin/users/invite', // Adjust the path as needed
                 method: 'GET',
                 credentials: 'include', // Includes cookies for authentication
             }),

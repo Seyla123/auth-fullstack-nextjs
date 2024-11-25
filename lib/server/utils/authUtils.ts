@@ -12,6 +12,7 @@ export type invitedUser = {
     inviteToken: string;
     expiredAt: string;
     status: string;
+    createdAt: string;
 }
 const signToken = (id: string | number): string =>
     jwt.sign({ id }, process.env.JWT_SECRET as string, {

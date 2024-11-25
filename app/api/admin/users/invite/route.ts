@@ -27,8 +27,9 @@ export const POST = catchAsync(async (req: NextRequest) => {
 
         const { token, hashedToken } = createVerificationToken();
         const expiredDate = new Date(Date.now() + 1000 * 60 * 60); // 1 hour from now
+        const formattedDate = expiredDate.toISOString().replace('T', ' ').slice(0, 19);
         const stmt = db.prepare(`INSERT INTO invites (email, role, inviteToken, expiredAt) VALUES (?, ?,?,?)`);
-        stmt.run(email, role, hashedToken, expiredDate.toISOString());
+        stmt.run(email, role, hashedToken, formattedDate);
 
         const allData = db.prepare('SELECT * FROM invites').all();
 

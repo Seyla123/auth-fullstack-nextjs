@@ -26,8 +26,7 @@ function Header() {
     const userAuth = useSelector((state: { auth: AuthState }) => state.auth.user);
 
     // useInviteUserMutation : Mutation hook to handle user invitation
-    const [inviteUser, { isLoading: isInviteUserLoading }] =
-        useInviteUserMutation();
+    const [inviteUser] = useInviteUserMutation();
     const [isInviteUserOpen, setIsInviteUserOpen] = useState<boolean>(false);
 
     const {
@@ -147,7 +146,7 @@ function Header() {
                     className="max-w-sm  focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
 
-                <Button className="bg-dark-4" onClick={()=>setIsInviteUserOpen(true)}>
+                <Button className="bg-dark-4" onClick={() => setIsInviteUserOpen(true)}>
                     <Plus />
                     Invite User
                 </Button>
