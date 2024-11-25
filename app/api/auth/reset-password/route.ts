@@ -3,7 +3,7 @@ import catchAsync from "@/lib/server/utils/catchAsync";
 import { NextRequest, NextResponse } from "next/server";
 import AppError from "@/lib/server/utils/appError";
 import { ResetPasswordFormSchema } from "@/lib/definitions";
-import { hashedToken } from "@/lib/server/utils/authUtils";
+import { createSendToken, hashedToken } from "@/lib/server/utils/authUtils";
 import { db } from "@/lib/initDb";
 import { User } from "@/app/api/auth/sign-in/route";
 import bcrypt from "bcryptjs";
@@ -25,10 +25,7 @@ export const PATCH = catchAsync(async (req: NextRequest) => {
     }
 
     // check if current password and new password are the same
-    const { currentPassword, newPassword } = validateData.data;
-    if (currentPassword == newPassword) {
-        throw new AppError("Current password and new password cannot be the same", 400);
-    }
+    const { newPassword } = validateData.data;
 
     // check if reset password token is valid
     const hashedResetToken = hashedToken(resetToken);
@@ -61,14 +58,6 @@ export const PATCH = catchAsync(async (req: NextRequest) => {
     if (result.changes === 0) {
         throw new AppError("Failed to update password for the user", 400);
     }
-    // perform the reset password logic
-    return NextResponse.json({
-        status: "success",
-        message: "Reset password successfully",
-        data,
-        user,
-        currentDate,
-        oldPassword,
-        newHashedPassword
-    })
+
+    return createSendToken(user, 200, req);
 });

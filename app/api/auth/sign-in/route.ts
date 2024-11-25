@@ -48,7 +48,6 @@ export const POST = catchAsync(async (req: NextRequest) => {
     if (!user) {
         throw new AppError("No user found with this email address", 404);
     };
-    console.log(user);
     
     if (user.oldPassword) {
         const isOldPasswordValid = await correctPassword(password, user.oldPassword);
