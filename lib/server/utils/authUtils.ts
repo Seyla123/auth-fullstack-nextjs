@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from 'crypto';
 import AppError from "./appError";
 import { db } from "@/lib/initDb";
+import bcrypt from "bcryptjs";
 export type invitedUser = {
     id: number | string;
     email: string;
@@ -17,6 +18,10 @@ export type invitedUser = {
     invitedByUsername?: string;
     invitedBy?: number | string;
 }
+
+const correctPassword = async (candidatePassword: string, hash: string) => {
+    return await bcrypt.compare(candidatePassword, hash);
+};
 const signToken = (id: string | number): string =>
     jwt.sign({ id }, process.env.JWT_SECRET as string, {
         expiresIn: process.env.JWT_EXPIRES_IN,
@@ -101,5 +106,5 @@ export const verifyInvite = async (token: string) => {
 
     return invitedUser;
 };
-export { signToken, createSendToken, createVerificationToken };
+export { signToken, createSendToken, createVerificationToken, correctPassword };
 

@@ -34,6 +34,13 @@ export const SigninFormSchema = z.object({
 });
 export type SigninFormValues = z.infer<typeof SigninFormSchema>;
 
+// Sign up schema and type
+export const ChangePasswordFormSchema = z.object({
+  currentPassword: passwordSchema,
+  newPassword: passwordSchema,
+});
+export type ChangePasswordFormValues = z.infer<typeof ChangePasswordFormSchema>;
+
 // Invite User schema  and type
 export const InviteUserFormSchema = z.object({
   email: emailSchema,
@@ -46,7 +53,7 @@ export type InviteUserFormValues = z.infer<typeof InviteUserFormSchema>;
 // Register User by invitation schema and type
 export const RegisterUserByInviteFormSchema = z.object({
   username: usernameSchema,
-  password: passwordSchema,
+  password: passwordSchema
 });
 export type RegisterUserByInviteFormValues = z.infer<typeof RegisterUserByInviteFormSchema>;
 export type FormState =

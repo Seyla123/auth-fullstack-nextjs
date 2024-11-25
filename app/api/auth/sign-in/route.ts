@@ -1,15 +1,12 @@
 "use server";
 import { db } from "@/lib/initDb";
 import { SigninFormSchema } from "@/lib/definitions";
-import bcrypt from "bcryptjs";
-import { createSendToken } from "@/lib/server/utils/authUtils";
+import { correctPassword, createSendToken } from "@/lib/server/utils/authUtils";
 import { NextRequest } from "next/server";
 import AppError from "@/lib/server/utils/appError";
 import catchAsync from "@/lib/server/utils/catchAsync";
 
-const correctPassword = async (candidatePassword: string, hash: string) => {
-    return await bcrypt.compare(candidatePassword, hash);
-};
+
 
 export type User = {
     id: number | string;
