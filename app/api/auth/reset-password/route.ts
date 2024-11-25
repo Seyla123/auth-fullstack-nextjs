@@ -1,6 +1,6 @@
 import { parseJsonBody } from "@/lib/server/helper/parseJsonBody";
 import catchAsync from "@/lib/server/utils/catchAsync";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import AppError from "@/lib/server/utils/appError";
 import { ResetPasswordFormSchema } from "@/lib/definitions";
 import { createSendToken, hashedToken } from "@/lib/server/utils/authUtils";
