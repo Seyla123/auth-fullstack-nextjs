@@ -9,7 +9,21 @@ export async function GET(req: NextRequest) {
         protect(req);
         restrict(req, 'admin')
         // insert the user into the database
-        const stmt = db.prepare("SELECT id, username ,email ,role,active, emailVerified from users ");
+        const stmt = db.prepare(`
+            SELECT 
+                id, 
+                username ,
+                email ,
+                role,
+                active, 
+                emailVerified, 
+                passwordChangedAt,
+                passwordResetToken,
+                passwordResetExpiresAt,
+                passwordResetRequestDate,
+                passwordResetRequest  from users 
+        `);
+
         const users = stmt.all();
 
         // return the newly created user and all users

@@ -14,6 +14,11 @@ export type User = {
     password: string;
     active: boolean;
     emailVerified: boolean;
+    passwordChangedAt?: string | null;
+    passwordResetToken?: string | null;
+    passwordResetExpiresAt?: string | null;
+    passwordResetRequestDate?: string | null;
+    passwordResetRequest?: number | null;
 };
 export const POST = catchAsync(async (req: NextRequest) => {
     const data = await req.json(); // Use .json() to parse the request body

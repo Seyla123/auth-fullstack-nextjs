@@ -24,6 +24,7 @@ export const initDb = async () => {
       emailVerified TEXT NOT NULL DEFAULT 'false', 
       passwordResetToken TEXT ,
       passwordResetExpiresAt DATETIME,
+      passwordResetRequestDate DATETIME NULL,
       passwordResetRequest INTEGER DEFAULT 0,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME
@@ -46,7 +47,7 @@ export const initDb = async () => {
   `);
 
   try {
-
+    
     createUsersTable.run(); // Only call once
     createInvitesTable.run();
   } catch (error) {
