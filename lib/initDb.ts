@@ -21,6 +21,7 @@ export const initDb = async () => {
       active TEXT NOT NULL DEFAULT 'true',
       emailVerificationToken TEXT UNIQUE,
       emailVerifiedRequestDate DATETIME NULL,
+      emailVerifiedRequest INTEGER DEFAULT 0,
       emailVerifiedExpiresAt DATETIME,
       emailVerified TEXT NOT NULL DEFAULT 'false', 
       passwordResetToken TEXT UNIQUE ,
