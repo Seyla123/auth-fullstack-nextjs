@@ -13,10 +13,14 @@ import { useSignupMutation } from '@/lib/client/services/authApi' // Make sure t
 import Loading from '@/components/Loading'
 import { ErrorDataType } from '../../sign-in/[[...sign-in]]/page'
 import Link from 'next/link'
+import { PasswordInput } from '@/components/ui/password-input'
+import { useState } from 'react'
 
 function Signup() {
   const { toast } = useToast()
   const [signup, { isLoading }] = useSignupMutation()
+  const [currentPassword, setCurrentPassword] = useState("")
+
   const {
     register,
     handleSubmit,
@@ -81,11 +85,13 @@ function Signup() {
             <Label htmlFor='password'>
               Password
             </Label>
-            <Input
+            <PasswordInput
               placeholder='password'
-              type='password'
+              value={currentPassword}
               {...register('password')}
-              className={cn('focus-visible:ring-0 focus-visible:ring-offset-0', { 'border-red-500': errors?.password })}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              autoComplete="current-password"
+              className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.password })}
             />
             {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
           </div>

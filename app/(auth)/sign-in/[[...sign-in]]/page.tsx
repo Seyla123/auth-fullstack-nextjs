@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation'
 import { useSigninMutation } from '@/lib/client/services/authApi'
 import Loading from '@/components/Loading'
 import Link from 'next/link'
+import { PasswordInput } from '@/components/ui/password-input'
+import { useState } from 'react'
 
 export type ErrorDataType = { data: { message: string } }
 
@@ -18,7 +20,7 @@ function Signin() {
   const router = useRouter();
   const { toast } = useToast()
   const [signin, { isLoading }] = useSigninMutation()
-
+  const [currentPassword, setCurrentPassword] = useState("")
   const {
     register,
     handleSubmit,
@@ -35,10 +37,10 @@ function Signin() {
         description: 'You have been successfully signed up!',
       })
       console.log('this role :', response);
-      
-      if(response?.data?.role == 'admin'){
+
+      if (response?.data?.role == 'admin') {
         router.push('/admin/users')
-      }else{
+      } else {
         router.push('/users')
       }
     } catch (error: unknown) {
@@ -73,7 +75,6 @@ function Signin() {
               />
               {/* {errors?.email && <p className="text-red-500 text-[12px]">{errors.email}</p>} */}
               {errors.email && <span className="text-red-500 text-[12px]">{String(errors?.email?.message)}</span>}
-
             </div>
 
           </div>
@@ -81,16 +82,17 @@ function Signin() {
             <Label htmlFor='password'>
               Password
             </Label>
-            <Input
+            <PasswordInput
               placeholder='password'
-              type='password'
+              value={currentPassword}
               {...register('password')}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              autoComplete="current-password"
               className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.password })}
-
             />
             {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
-
           </div>
+
           <Button disabled={isLoading} type='submit' className='bg-dark-4'>
 
             {isLoading ? (
