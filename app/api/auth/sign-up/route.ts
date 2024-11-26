@@ -50,7 +50,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
     const user = db.prepare("SELECT * FROM users WHERE email = ? ");
     const createdUser = user.get(email);
 
-    const url = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/auth/verify-email?token=${verifyToken}`;
+    const url = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verifyToken}`;
     const data =
     {
       "verify_link": url,

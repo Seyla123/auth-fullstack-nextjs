@@ -29,7 +29,7 @@ interface VerifyUserResponse {
 
 export const inviteUserApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        // Signup mutation
+        //get all invited users
         getAllInviteUsers: builder.query<DefaultResponse, void>({
             query: () => ({
                 url: '/admin/users/invite', // Adjust the path as needed
@@ -38,6 +38,7 @@ export const inviteUserApi = baseApi.injectEndpoints({
             }),
             providesTags: ['Invite'], // Tags for caching 
         }),
+        // invite user
         inviteUser: builder.mutation<InviteUserResponse, InviteUserFormValues>({
             query: (data) => ({
                 url: `/admin/users/invite`,
@@ -47,6 +48,7 @@ export const inviteUserApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Invite'],
         }),
+        // verify invite user
         verifyInviteUser: builder.mutation<VerifyUserResponse, void>({
             query: (token) => ({
                 url: `/admin/users/invite/${token}`,
@@ -55,6 +57,7 @@ export const inviteUserApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Invite'],
         }),
+        //delete invited user
         deleteInvitedUser: builder.mutation<DeleteUserResponse, string | number>({
             query: (id) => ({
                 url: `/admin/users/invite/${id}`,
@@ -63,6 +66,7 @@ export const inviteUserApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Invite'],
         }),
+        // delete multiple invited users
         deleteManyInvitedUser: builder.mutation<DeleteUserResponse, string[]>({
             query: (ids) => ({
                 url: `/admin/users/invite`,
@@ -73,7 +77,8 @@ export const inviteUserApi = baseApi.injectEndpoints({
                 credentials: 'include',
             }),
             invalidatesTags: ['Invite'],
-        })
+        }),
+        
     }),
     overrideExisting: false,
 });

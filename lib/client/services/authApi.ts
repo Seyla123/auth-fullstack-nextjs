@@ -2,12 +2,10 @@ import { baseApi } from '@/lib/client/services/baseApi';
 import { SigninFormValues, SignupFormValues } from '@/lib/definitions';
 import { User } from '@/app/api/auth/sign-in/route';
 
-// Make sure you have the appropriate types defined elsewhere for DefaultResponse and BaseError
 interface DefaultResponse {
   status: string;
   message: string;
   data?: User | null;
-  // You can add other properties as needed
 }
 
 interface SignoutResponse {
@@ -19,7 +17,7 @@ export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Signup mutation
     signup: builder.mutation<DefaultResponse, SignupFormValues>({
-      query: (user: User) => ({
+      query: (user) => ({
         url: '/auth/sign-up', // Adjust the path as needed
         method: 'POST',
         body: user,
@@ -28,7 +26,7 @@ export const authApi = baseApi.injectEndpoints({
       invalidatesTags: ['Auth'], // Tags for caching and invalidation
     }),
 
-    // Login mutation
+    // sign in mutation
     signin: builder.mutation<DefaultResponse, SigninFormValues>({
       query: (user) => ({
         url: '/auth/sign-in', // Adjust the path as needed
@@ -38,7 +36,7 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    // Login mutation
+    // sign out mutation
     signout: builder.mutation<SignoutResponse, void>({
       query: () => ({
         url: '/auth/sign-out', // Adjust the path as needed
@@ -47,10 +45,27 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Auth'], // Tags for caching and invalidation
     }),
-
+    // check user credentials
     checkAuth: builder.query<DefaultResponse, void>({
       query: () => ({
         url: '/auth/me',
+        method: 'GET',
+        credentials: 'include',
+      }),
+    }),
+    // verify user sign up
+    verifySignup: builder.mutation<DefaultResponse, string | null>({
+      query: (token) => ({
+        url: `/auth/verify-email`,
+        method: 'POST',
+        params: { token },
+        credentials: 'include',
+      }),
+    }),
+    // verify invation token
+    verifyInvitation: builder.mutation<DefaultResponse, string | null>({
+      query: (token) => ({
+        url: `/admin/users/invite/${token}`,
         method: 'GET',
         credentials: 'include',
       }),
@@ -63,5 +78,7 @@ export const {
   useSignupMutation,
   useSigninMutation,
   useSignoutMutation,
-  useCheckAuthQuery
+  useCheckAuthQuery,
+  useVerifySignupMutation,
+  useVerifyInvitationMutation,
 } = authApi;
