@@ -62,6 +62,14 @@ export const authApi = baseApi.injectEndpoints({
         credentials: 'include',
       }),
     }),
+    // verify invation token
+    verifyInvitation: builder.mutation<DefaultResponse, string | null>({
+      query: (token) => ({
+        url: `/admin/users/invite/${token}`,
+        method: 'GET',
+        credentials: 'include',
+      }),
+    })
   }),
   overrideExisting: false, // Set to true if you want to override existing endpoints
 });
@@ -71,5 +79,6 @@ export const {
   useSigninMutation,
   useSignoutMutation,
   useCheckAuthQuery,
-  useVerifySignupMutation
+  useVerifySignupMutation,
+  useVerifyInvitationMutation,
 } = authApi;

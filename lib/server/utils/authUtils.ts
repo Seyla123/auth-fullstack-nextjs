@@ -86,7 +86,7 @@ export const verifyInvite = async (token: string) => {
 
     const invitedUser = db.prepare('SELECT * FROM invites WHERE inviteToken = ?').get(hashedToken) as invitedUser;
     if (!invitedUser) {
-        throw new AppError("User not found", 404);
+        throw new AppError("Invalid Token", 404);
     }
 
     // SQLite database has default datetime , so it will be wrong with our current datetime

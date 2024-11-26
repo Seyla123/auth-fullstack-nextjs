@@ -18,7 +18,7 @@ function VerifyPage() {
         return <div>error : {errorData?.data?.message} </div>
     }
     if (isSuccess) {
-        return <div>Signup successful</div>
+        return <div>verify Invitation link successful</div>
     }
     return (
         <div className='w-full flex justify-center h-screen'>

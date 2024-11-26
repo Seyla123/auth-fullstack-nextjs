@@ -7,7 +7,6 @@ import { createVerificationToken } from "@/lib/server/utils/authUtils";
 import { protect, restrict } from "@/middlewares/server/authMiddleware";
 import { sendMail } from "@/lib/server/services/EmailService";
 
-
 // Wrap your handler with catchAsync
 export const POST = catchAsync(async (req: NextRequest) => {
     try {
