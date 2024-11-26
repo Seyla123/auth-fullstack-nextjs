@@ -7,6 +7,7 @@ import catchAsync from "@/lib/server/utils/catchAsync";
 import AppError from "@/lib/server/utils/appError";
 import { createVerificationToken } from "@/lib/server/utils/authUtils";
 import jwt from "jsonwebtoken";
+import { sendMail } from "@/lib/server/services/EmailService";
 
 export const POST = catchAsync(async (req: NextRequest) => {
   // Read the request body
@@ -49,6 +50,15 @@ export const POST = catchAsync(async (req: NextRequest) => {
     const user = db.prepare("SELECT * FROM users WHERE email = ? ");
     const createdUser = user.get(email);
 
+    const url = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/auth/verify-email?token=${verifyToken}`;
+    const data =
+    {
+      "verify_link": url,
+      "username": username
+    }
+
+    //send email verification token
+    await sendMail(email, 1, data)
     // Return the newly created user
     return NextResponse.json(
       { message: "User created successfully", data: createdUser, token: hashedToken, jwt: verifyToken },

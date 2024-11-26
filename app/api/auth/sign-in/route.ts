@@ -8,11 +8,13 @@ import catchAsync from "@/lib/server/utils/catchAsync";
 
 export type User = {
     id: number | string;
-    username: string;
+    username: string | null;
     email: string;
     role: string;
     password: string;
     active: boolean | string;
+    emailVerifiedRequest?: number | string;
+    emailVerifiedRequestDate?: string | null;
     emailVerified: boolean | string;
     oldPassword?: string | null;
     passwordChangedAt?: string | null;
