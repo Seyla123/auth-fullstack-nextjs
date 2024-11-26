@@ -81,8 +81,8 @@ export default function Home() {
   return (
     <>
       <TableComponent
-        header={["ID", "Username", "Email", "Role", "Active"]}
-        dataColumn={["id", "username", "email", "role", "active"]}
+        header={["ID", "Username", "Email", "Role", "Active","Verified"]}
+        dataColumn={["id", "username", "email", "role", "active", "emailVerified"]}
         onDelete={handleDelete}
         onEdit={handleEdit}
         onView={handleView}
