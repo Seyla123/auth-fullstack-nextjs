@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import catchAsync from "@/lib/server/utils/catchAsync";
 import { createVerificationToken } from "@/lib/server/utils/authUtils";
 import { protect, restrict } from "@/middlewares/server/authMiddleware";
+import { sendMail } from "@/lib/server/services/EmailService";
 
 
 // Wrap your handler with catchAsync
@@ -37,6 +38,16 @@ export const POST = catchAsync(async (req: NextRequest) => {
             LEFT JOIN users ON invites.invitedBy = users.id
           `).all();
 
+        const user = JSON.parse(req.headers.get('user')!);
+        const url = `${req.nextUrl.origin || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-invitation?token=${token}`;
+        const dataSend =
+        {
+            "invitedLink": url,
+            "invitedBy": user.email
+        }
+
+        //send email verification token
+        const sendMailed = await sendMail(email, 4, dataSend)
         // Return a successful response
         return NextResponse.json(
             {
@@ -44,7 +55,8 @@ export const POST = catchAsync(async (req: NextRequest) => {
                 message: "User invited successfully",
                 data: { email, role, invitedBy: currentUserId, allData },
                 token,
-                date: formattedDate
+                date: formattedDate,
+                sendMailed
             },
             { status: 201 }
         );
