@@ -5,11 +5,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = catchAsync(async (req: NextRequest) => {
     const { toEmail, templateId, contact } = await req.json();
-
-    const result = await sendMail(toEmail, templateId, contact);
+    await sendMail(toEmail, templateId, contact);
     return NextResponse.json({
         message: 'Email sent successfully',
-        result
     }, { status: 200 });
 });
 

@@ -8,12 +8,14 @@ import catchAsync from "@/lib/server/utils/catchAsync";
 
 export type User = {
     id: number | string;
-    username: string;
+    username: string | null;
     email: string;
     role: string;
     password: string;
-    active: boolean;
-    emailVerified: boolean;
+    active: boolean | string;
+    emailVerifiedRequest?: number | string;
+    emailVerifiedRequestDate?: string | null;
+    emailVerified: boolean | string;
     oldPassword?: string | null;
     passwordChangedAt?: string | null;
     passwordResetToken?: string | null;
@@ -45,23 +47,33 @@ export const POST = catchAsync(async (req: NextRequest) => {
     `);
     const user = stmt.get(email) as User;
 
+    // Check if the user exists
     if (!user) {
         throw new AppError("No user found with this email address", 404);
     };
-    
+
+    // Check if the old password is correct
     if (user.oldPassword) {
         const isOldPasswordValid = await correctPassword(password, user.oldPassword);
-        console.log(isOldPasswordValid);
-        
         if (isOldPasswordValid) {
             throw new AppError("This is old password, please input new password", 401);
         }
     }
+
     // Verify the password
     const isValid = await correctPassword(password, user.password);
     if (!isValid) {
         throw new AppError("Password is incorrect", 401);
     };
+
+    // Check if the user is active
+    if (user.active !== 'true') {
+        throw new AppError("Your account is currently deactivated. Please reach out to support.", 401);
+    }
+    // Check if the user is verified
+    if (user.emailVerified !== 'true') {
+        throw new AppError("Email verification is pending. Check your inbox for the verification link.", 401);
+    }
 
     // Send the token and user data
     return createSendToken(user, 200, req);

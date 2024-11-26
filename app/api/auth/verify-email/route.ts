@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { db } from "@/lib/initDb";
 import { hashedToken } from "@/lib/server/utils/authUtils";
-import { User } from "../sign-in/route";
+import { User } from "@/app/api/auth/sign-in/route";
 
 export const POST = catchAsync(async (req: NextRequest) => {
     const { searchParams } = new URL(req.url);
@@ -41,3 +41,4 @@ export const POST = catchAsync(async (req: NextRequest) => {
         message: 'Verified email successfully',
     })
 })
+
