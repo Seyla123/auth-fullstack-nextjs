@@ -1,73 +1,80 @@
 "use server";
 import { db } from "@/lib/initDb";
-import { z } from "zod";
 import { SigninFormSchema } from "@/lib/definitions";
-import bcrypt from "bcryptjs";
-import { createSendToken } from "@/lib/server/utils/authUtils";
-import { NextRequest, NextResponse } from "next/server";
-
-const correctPassword = async (candidatePassword: string, hash: string) => {
-    return await bcrypt.compare(candidatePassword, hash);
-};
+import { correctPassword, createSendToken } from "@/lib/server/utils/authUtils";
+import { NextRequest } from "next/server";
+import AppError from "@/lib/server/utils/appError";
+import catchAsync from "@/lib/server/utils/catchAsync";
 
 export type User = {
     id: number | string;
-    username: string;
+    username: string | null;
     email: string;
     role: string;
     password: string;
-    active: boolean;
-    emailVerified: boolean;
+    active: boolean | string;
+    emailVerifiedRequest?: number | string;
+    emailVerifiedRequestDate?: string | null;
+    emailVerified: boolean | string;
+    oldPassword?: string | null;
+    passwordChangedAt?: string | null;
+    passwordResetToken?: string | null;
+    passwordResetExpiresAt?: string | null;
+    passwordResetRequestDate?: string | null;
+    passwordResetRequest?: number | null;
 };
+export const POST = catchAsync(async (req: NextRequest) => {
+    const data = await req.json(); // Use .json() to parse the request body
+    const validatedData = SigninFormSchema.safeParse(data); // Zod validation
 
-export async function POST(req: NextRequest) {
-    try {
-        // Parse and validate the incoming data
-        const data = await req.json(); // Use .json() to parse the request body
-        const validatedData = SigninFormSchema.safeParse(data); // Zod validation
-
-        if (!validatedData.success) {
-
-            // Respond with validation messages
-            const firstIssue = validatedData.error.issues[0];
-            return NextResponse.json(
-              { message: firstIssue.message },
-              { status: 400 }
-            );
-          }
-        const { email, password } = validatedData.data;
-
-        // Query database to find the user
-        const stmt = db.prepare("SELECT id,username, email, password, role, active, emailVerified FROM users WHERE email = ?");
-        const user = stmt.get(email) as User;
-
-        if (!user) {
-            return NextResponse.json({
-                status: "error",
-                message: "No user found with this email address",
-            }, { status: 401 })
-        };
-
-        // Verify the password
-        const isValid = await correctPassword(password, user.password);
-        if (!isValid) {
-            return NextResponse.json({
-                status: "error",
-                message: "Password is incorrect",
-            }, { status: 401 })
-        };
-
-        // Send the token and user data
-        return createSendToken(user, 200, req);
-
-    } catch (error: unknown) {
-        // Handle validation error
-        if (error instanceof z.ZodError) {
-            return NextResponse.json({ errors: error.issues[0].message }, { status: 400 });
-        }
-
-        return NextResponse.json({
-            message: error instanceof Error ? error.message : "An unexpected error occurred",
-        }, { status: 500 });
+    if (!validatedData.success) {
+        // Respond with validation messages
+        throw new AppError(validatedData.error.issues[0].message, 400);
     }
-}
+    const { email, password } = validatedData.data;
+
+    // Query database to find the user
+    const stmt = db.prepare(`
+        SELECT 
+            id,
+            username, 
+            email, 
+            password, 
+            role, 
+            active, 
+            emailVerified, 
+            oldPassword FROM users WHERE email = ?    
+    `);
+    const user = stmt.get(email) as User;
+
+    // Check if the user exists
+    if (!user) {
+        throw new AppError("No user found with this email address", 404);
+    };
+
+    // Check if the old password is correct
+    if (user.oldPassword) {
+        const isOldPasswordValid = await correctPassword(password, user.oldPassword);
+        if (isOldPasswordValid) {
+            throw new AppError("This is old password, please input new password", 401);
+        }
+    }
+
+    // Verify the password
+    const isValid = await correctPassword(password, user.password);
+    if (!isValid) {
+        throw new AppError("Password is incorrect", 401);
+    };
+
+    // Check if the user is active
+    if (user.active !== 'true') {
+        throw new AppError("Your account is currently deactivated. Please reach out to support.", 401);
+    }
+    // Check if the user is verified
+    if (user.emailVerified !== 'true') {
+        throw new AppError("Email verification is pending. Check your inbox for the verification link.", 401);
+    }
+
+    // Send the token and user data
+    return createSendToken(user, 200, req);
+});

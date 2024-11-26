@@ -4,6 +4,7 @@ import { User } from '@/app/api/auth/sign-in/route';
 
 // Make sure you have the appropriate types defined elsewhere for DefaultResponse and BaseError
 interface DefaultResponse {
+  status: string;
   message: string;
   data?: User | null;
   // You can add other properties as needed

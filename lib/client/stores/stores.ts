@@ -7,19 +7,22 @@ import authReducer from '@/lib/client/stores/slices/authSlice'
 // APIs Reducers
 import { authApi } from '@/lib/client/services/authApi';
 import { userApi } from '@/lib/client/services/admin/userApi';
+import { inviteUserApi } from '../services/admin/inviteUserApi';
 
 const stores = configureStore({
     reducer: {
         auth: authReducer,
         [authApi.reducerPath]: authApi.reducer,
-        [userApi.reducerPath]: userApi.reducer
+        [userApi.reducerPath]: userApi.reducer,
+        [inviteUserApi.reducerPath]: inviteUserApi.reducer
 
     },
     // Middleware for API calls
     middleware: (getDefaultMiddleware: any) =>
         getDefaultMiddleware().concat(
             authApi.middleware,
-            userApi.middleware
+            userApi.middleware,
+            inviteUserApi.middleware
         ),
 });
 
