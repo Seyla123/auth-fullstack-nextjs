@@ -55,8 +55,6 @@ export const POST = catchAsync(async (req: NextRequest) => {
     // Check if the old password is correct
     if (user.oldPassword) {
         const isOldPasswordValid = await correctPassword(password, user.oldPassword);
-        console.log(isOldPasswordValid);
-
         if (isOldPasswordValid) {
             throw new AppError("This is old password, please input new password", 401);
         }
