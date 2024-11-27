@@ -8,15 +8,15 @@ interface DefaultResponse {
   data?: User | null;
 }
 
-interface SignoutResponse {
-  message: string,
-  status: string
-}
 
 interface RegisterUserByInviteFormValues {
   token: string | null;
   password: string | null;
   username: string | null;
+}
+
+interface RequestPasswordResetFormValues {
+  email: string;
 }
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -42,7 +42,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
     // sign out mutation
-    signout: builder.mutation<SignoutResponse, void>({
+    signout: builder.mutation<DefaultResponse, void>({
       query: () => ({
         url: '/auth/sign-out', // Adjust the path as needed
         method: 'POST',
@@ -83,6 +83,15 @@ export const authApi = baseApi.injectEndpoints({
         body: user,
         credentials: 'include',
       }),
+    }),
+    // forgot password
+    forgotPassword: builder.mutation<DefaultResponse, RequestPasswordResetFormValues>({
+      query: (email) => ({
+        url: `/auth/forgot-password`,
+        method: 'POST',
+        body: email,
+        credentials: 'include',
+      }),
     })
   }),
   overrideExisting: false, // Set to true if you want to override existing endpoints
@@ -95,5 +104,6 @@ export const {
   useCheckAuthQuery,
   useVerifySignupMutation,
   useVerifyInvitationMutation,
-  useRegisterUserByInviteMutation
+  useRegisterUserByInviteMutation,
+  useForgotPasswordMutation
 } = authApi;
