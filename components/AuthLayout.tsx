@@ -17,6 +17,8 @@ export const AuthLayout = ({ img, title, children }: { title?: string |null, img
                         src={img}
                         alt="auth"
                         fill
+                        priority
+                        sizes="(max-width: 1024px) 100vw, 50vw" 
                         className="object-cover rounded-3xl"
                     />
                 </div>
