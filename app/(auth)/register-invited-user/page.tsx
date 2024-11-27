@@ -87,7 +87,7 @@ function RegisterInvitedUserPage() {
   return (
     <AuthLayout img={AngkorImg} title={isSuccess ? 'Complete Registration' : ''}>
       {
-        verifyLoading ? <Loading title='Verifying...' />
+        verifyLoading ? <LoadingVerify />
           :
           (!verifyLoading && error ?
             <ErrorVerification />
@@ -133,7 +133,7 @@ function RegisterInvitedUserPage() {
                     Already have an account? Sign in
                   </p>
                 </Link>
-              </> : <Loading title='Verifying...' />
+              </> : <LoadingVerify />
 
           )
       }
@@ -158,5 +158,15 @@ const ErrorVerification = () => {
         </Button>
       </Link>
     </div>
+  )
+}
+const LoadingVerify = () => {
+  return (
+    <>
+      <h1 className='text-3xl text-center font-bold mb-4'>
+        Please wait a moment
+      </h1>
+      <Loading title='Verifying your invition link' />
+    </>
   )
 }

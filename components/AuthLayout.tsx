@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Image from 'next/image'
-export const AuthLayout = ({ img, title, children }: { title?: string |null, img: any, children: React.ReactNode }) => {
+export const AuthLayout = ({ img, title, children }: { title?: string | null, img: any, children: React.ReactNode }) => {
     return (
         <main className='flex h-screen  items-center justify-center bg-white'>
             <section className='shadow-lg flex h-full py-3 px-3 rounded  w-full   justify-center '>
@@ -18,11 +18,10 @@ export const AuthLayout = ({ img, title, children }: { title?: string |null, img
                         alt="auth"
                         fill
                         priority
-                        sizes="(max-width: 1024px) 100vw, 50vw" 
+                        sizes="(max-width: 1024px) 100vw, 50vw"
                         className="object-cover rounded-3xl"
                     />
                 </div>
-
             </section>
         </main>
     )
