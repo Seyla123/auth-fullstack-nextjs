@@ -12,7 +12,6 @@ import { useSigninMutation } from '@/lib/client/services/authApi'
 import Loading from '@/components/Loading'
 import Link from 'next/link'
 import { PasswordInput } from '@/components/ui/password-input'
-
 import AngkorImg from '@/public/angkor-img.jpg'
 import { AuthLayout } from '@/components/AuthLayout'
 export type ErrorDataType = { data: { message: string } }
@@ -37,7 +36,6 @@ function Signin() {
         title: 'Success',
         description: 'You have been successfully signed up!',
       })
-      console.log('this role :', response);
 
       if (response?.data?.role == 'admin') {
         router.push('/admin/users')
