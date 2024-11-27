@@ -37,7 +37,7 @@ function Signup() {
         title: 'Success',
         description: 'You have been successfully signed up!',
       });
-    } catch (error: unknown) {
+    } catch (error) {
       const errorData = error as ErrorDataType;
       // Handle the error case
       toast({

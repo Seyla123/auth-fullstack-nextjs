@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import jwt, { JwtPayload } from "jsonwebtoken"; // Install with `npm install jsonwebtoken`
+import { JwtPayload } from "jsonwebtoken"; // Install with `npm install jsonwebtoken`
 import { db } from "@/lib/initDb";
 import AppError from "@/lib/server/utils/appError";
 import { uncodedJwtToken } from "@/lib/server/utils/authUtils";

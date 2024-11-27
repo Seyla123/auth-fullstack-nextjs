@@ -38,7 +38,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
           `).all();
 
         const user = JSON.parse(req.headers.get('user')!);
-        const url = `${req.nextUrl.origin || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-invitation?token=${token}`;
+        const url = `${req.nextUrl.origin || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/register-invited-user?token=${token}`;
         const dataSend =
         {
             "invitedLink": url,
@@ -46,7 +46,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
         }
 
         //send email verification token
-        const sendMailed = await sendMail(email, 4, dataSend)
+        await sendMail(email, 4, dataSend)
         // Return a successful response
         return NextResponse.json(
             {
@@ -55,7 +55,6 @@ export const POST = catchAsync(async (req: NextRequest) => {
                 data: { email, role, invitedBy: currentUserId, allData },
                 token,
                 date: formattedDate,
-                sendMailed
             },
             { status: 201 }
         );

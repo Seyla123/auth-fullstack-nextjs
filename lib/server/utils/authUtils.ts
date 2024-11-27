@@ -12,7 +12,7 @@ export type invitedUser = {
     role: string;
     inviteToken: string;
     expiredAt: string;
-    status: string;
+    status: 'pending' | 'accepted' | 'expired';
     createdAt: string;
     invitedByEmail?: string;
     invitedByUsername?: string;

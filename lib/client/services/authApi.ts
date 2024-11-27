@@ -13,6 +13,11 @@ interface SignoutResponse {
   status: string
 }
 
+interface RegisterUserByInviteFormValues {
+  token: string | null;
+  password: string | null;
+  username: string | null;
+}
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Signup mutation
@@ -43,7 +48,7 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         credentials: 'include', // Includes cookies for authentication
       }),
-      invalidatesTags: ['Auth'], // Tags for caching and invalidation
+      invalidatesTags: ['Auth'],
     }),
     // check user credentials
     checkAuth: builder.query<DefaultResponse, void>({
@@ -69,6 +74,15 @@ export const authApi = baseApi.injectEndpoints({
         method: 'GET',
         credentials: 'include',
       }),
+    }),
+    // register user by invitation
+    registerUserByInvite: builder.mutation<DefaultResponse, RegisterUserByInviteFormValues>({
+      query: (user) => ({
+        url: `/admin/users/register`,
+        method: 'POST',
+        body: user,
+        credentials: 'include',
+      }),
     })
   }),
   overrideExisting: false, // Set to true if you want to override existing endpoints
@@ -81,4 +95,5 @@ export const {
   useCheckAuthQuery,
   useVerifySignupMutation,
   useVerifyInvitationMutation,
+  useRegisterUserByInviteMutation
 } = authApi;

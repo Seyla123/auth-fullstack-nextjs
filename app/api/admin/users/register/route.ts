@@ -9,15 +9,19 @@ import bcrypt from "bcryptjs";
 export const POST = catchAsync(async (req: NextRequest) => {
     try {
         const data = await req.json();
-        const inviteToken = await verifyInvite(data.token);
-
         const validatedData = RegisterUserByInviteFormSchema.safeParse(data);
-
         if (!validatedData.success) {
             throw new AppError(validatedData.error.issues[0].message, 400)
         }
 
         const { username, password } = validatedData.data;
+        const inviteToken = await verifyInvite(data.token);
+        if (!inviteToken) {
+            throw new AppError(`Invite token not found`, 404);
+        }
+
+
+
         // Start a transaction
         db.exec('BEGIN TRANSACTION');
         const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(inviteToken.email);
