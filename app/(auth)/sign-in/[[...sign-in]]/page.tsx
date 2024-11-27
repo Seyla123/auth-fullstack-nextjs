@@ -55,7 +55,6 @@ function Signin() {
   return (
 
     <AuthLayout img={AngkorImg} title='Welcome back'>
-
       <>
         <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4 '>
           <div className='grid w-full  items-center gap-1.5'>
@@ -92,7 +91,6 @@ function Signin() {
             </p>
           </Link>
           <Button disabled={isLoading} type='submit' className='py-6 bg-dark-4'>
-
             {isLoading ? (
               <>
                 <Loading title='Sign in...' />
@@ -106,7 +104,6 @@ function Signin() {
           </p>
         </Link>
       </>
-
     </AuthLayout>
   )
 }

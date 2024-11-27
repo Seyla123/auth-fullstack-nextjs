@@ -10,13 +10,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ErrorVerification } from '@/app/(auth)/register-invited-user/page';
-function VerifyPage() {
+function VerifyEmailPage() {
     const [verifySignup, { isLoading, isSuccess, error }] = useVerifySignupMutation();
     const searchParams = useSearchParams()
 
     const token = searchParams.get('token')
     useEffect(() => {
-        verifySignup(token)
+        verifySignup(token);
     }, [token])
 
     return (
@@ -35,7 +35,7 @@ function VerifyPage() {
     )
 }
 
-export default VerifyPage;
+export default VerifyEmailPage;
 const VerifyEmailSuccess = () => {
     return (
         <div className='flex flex-col items-center justify-center gap-4'>

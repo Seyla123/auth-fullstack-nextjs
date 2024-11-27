@@ -100,7 +100,7 @@ function Signup() {
         </Button>
       </form>
       <Link href='/sign-in'>
-        <p className='text-center text-sm mt-4'>
+        <p className='text-center text-sm mt-4 text-dark-4'>
           Already have an account? Sign in
         </p>
       </Link>

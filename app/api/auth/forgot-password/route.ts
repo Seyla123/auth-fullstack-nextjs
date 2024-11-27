@@ -5,6 +5,7 @@ import catchAsync from "@/lib/server/utils/catchAsync";
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "@/app/api/auth/sign-in/route";
 import { createVerificationToken } from "@/lib/server/utils/authUtils";
+import { sendMail } from "@/lib/server/services/EmailService";
 
 export const POST = catchAsync(async (req: NextRequest) => {
     const data = await req.json();
@@ -46,9 +47,16 @@ export const POST = catchAsync(async (req: NextRequest) => {
         throw new AppError('Failed to update reset token for the user.', 400);
     }
 
+    const url = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+    const dataSend =
+    {
+        "link": url,
+        "expiredTime": "10 minutes"
+    }
+    await sendMail(email, 5, dataSend)
+
     return NextResponse.json({
         status: 'success',
-        message: "Successfully sent reset password to email.",
-        token,
+        message: "Successfully sent reset password to email."
     }, { status: 200 })
 })
