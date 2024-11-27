@@ -92,7 +92,25 @@ export const authApi = baseApi.injectEndpoints({
         body: email,
         credentials: 'include',
       }),
-    })
+    }),
+    // verify reset passsword token
+    verifyResetPassword: builder.mutation<DefaultResponse, string | null>({
+      query: (token) => ({
+        url: `/auth/reset-password`,
+        method: 'GET',
+        params: { token },
+        credentials: 'include',
+      }),
+    }),
+    // reset password
+    resetPassword: builder.mutation<DefaultResponse, { password: string; token: string }>({
+      query: (data) => ({
+        url: `/auth/reset-password`,
+        method: 'POST',
+        body: data,
+        credentials: 'include',
+      }),
+    }),
   }),
   overrideExisting: false, // Set to true if you want to override existing endpoints
 });
@@ -105,5 +123,7 @@ export const {
   useVerifySignupMutation,
   useVerifyInvitationMutation,
   useRegisterUserByInviteMutation,
-  useForgotPasswordMutation
+  useForgotPasswordMutation,
+  useVerifyResetPasswordMutation,
+  useResetPasswordMutation,
 } = authApi;
