@@ -20,7 +20,7 @@ interface RequestPasswordResetFormValues {
 
 interface ResetPasswordFormValues {
   newPassword: string;
-  token: string
+  resetToken: string | null;
 }
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

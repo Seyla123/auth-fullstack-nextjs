@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect } from 'react'
-import { useVerifyResetPasswordMutation } from '@/lib/client/services/authApi';
+import { useVerifyResetPasswordMutation, useResetPasswordMutation } from '@/lib/client/services/authApi';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ErrorDataType } from '@/app/(auth)/sign-in/[[...sign-in]]/page';
 import { ErrorVerification, LoadingVerify } from '@/app/(auth)/register-invited-user/page';
@@ -13,9 +13,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Loading from '@/components/Loading';
 import { ResetConfirmPasswordFormSchema, ResetConfirmPasswordFormValues } from '@/lib/definitions';
 import { GoBack } from '@/components/GoBack';
+import { toast } from '@/hooks/use-toast';
 function ResetPasswordPage() {
     const router = useRouter();
-    const [verifyResetPassword, { isLoading, isSuccess, error }] = useVerifyResetPasswordMutation();
+    const [verifyResetPassword, { isLoading: verifyLoading, isSuccess, error }] = useVerifyResetPasswordMutation();
+    const [resetPassword, { isLoading }] = useResetPasswordMutation();
     const searchParams = useSearchParams()
     const token = searchParams.get('token')
 
@@ -33,28 +35,52 @@ function ResetPasswordPage() {
         } else {
             const tokenLocal = localStorage.getItem('resetPasswordToken');
             verifyResetPassword(tokenLocal);
-            router.replace(window.location.pathname);
         }
-    }, [verifyResetPassword]);
+
+    }, [verifyResetPassword, token, router]);
 
     useEffect(() => {
         if (isSuccess) {
             if (token) {
                 localStorage.setItem('resetPasswordToken', token);
             }
+            router.replace(window.location.pathname);
         }
-    }, [isSuccess]);
+    }, [router, isSuccess, token]);
 
     const onSubmit = async (data: ResetConfirmPasswordFormValues) => {
-        console.log('this data : ', data);
-
+        const resetPasswordToken = token || localStorage.getItem('resetPasswordToken');
+        try {
+            await resetPassword({
+                resetToken: resetPasswordToken,
+                newPassword: data.password
+            }).unwrap();
+            toast({
+                title: 'Success',
+                description: 'You have been successfully registered!',
+            })
+            router.push('/sign-in')
+        } catch (error) {
+            const errorData = error as ErrorDataType;
+            console.log('error reset password user', errorData);
+            toast({
+                title: 'Error',
+                description: errorData?.data?.message || 'An unknown error occurred.',
+                variant: 'destructive',
+            })
+        } finally {
+            localStorage.removeItem('invitedToken');
+        }
     }
-    // if (error) {
-    //     const errorData = error as ErrorDataType;
-    //     console.log('this : ', error);
-    //     return <ErrorVerification title={errorData?.data?.message} />
-    // }
-    if (!isSuccess) {
+    if (verifyLoading) {
+        return <LoadingVerify title={'Verifying your reset password link'} />
+    }
+    if (error) {
+        const errorData = error as ErrorDataType;
+        console.log('this : ', error);
+        return <ErrorVerification title={errorData?.data?.message} />
+    }
+    if (isSuccess) {
         return (
             <>
                 <div className='flex flex-col gap-8'>
@@ -106,6 +132,7 @@ function ResetPasswordPage() {
             </>
         )
     }
+
     return <LoadingVerify title={'Verifying your reset password link'} />
 }
 

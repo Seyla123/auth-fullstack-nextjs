@@ -18,18 +18,20 @@ export const PATCH = catchAsync(async (req: NextRequest) => {
     if (!resetToken) {
         throw new AppError("Reset token not provided", 400);
     }
-
     // validate the reset password form data  using zod schema
     const validateData = ResetPasswordFormSchema.safeParse(data);
     if (!validateData.success) {
         throw new AppError(validateData.error.issues[0].message, 400);
     }
 
-    // check if current password and new password are the same
     const { newPassword } = validateData.data;
 
+    // uncoded Jwt Token
+    const decoded = uncodedJwtToken(resetToken) as JwtPayload;
+
+    // hashed Token
     // check if reset password token is valid
-    const hashedResetToken = hashedToken(resetToken);
+    const hashedResetToken = hashedToken(decoded.passwordResetToken);
     const user = db.prepare(`
         SELECT * FROM users WHERE passwordResetToken = ?
     `).get(hashedResetToken) as User;

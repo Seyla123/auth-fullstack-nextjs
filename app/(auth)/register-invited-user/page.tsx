@@ -45,7 +45,7 @@ function RegisterInvitedUserPage() {
       verifyInvitation(tokenLocal);
     }
 
-  }, [verifyInvitation]);
+  }, [verifyInvitation, token]);
 
 
   useEffect(() => {
@@ -55,7 +55,7 @@ function RegisterInvitedUserPage() {
       }
       router.replace(window.location.pathname);
     }
-  }, [isSuccess, router]);
+  }, [isSuccess, router, token]);
 
   const onSubmit = async (data: RegisterUserByInviteFormValues) => {
     try {
@@ -64,7 +64,6 @@ function RegisterInvitedUserPage() {
         token: invitedToken,
         ...data
       }).unwrap();
-      localStorage.removeItem('invitedToken');
       toast({
         title: 'Success',
         description: 'You have been successfully registered!',
@@ -84,6 +83,8 @@ function RegisterInvitedUserPage() {
         variant: 'destructive',
       })
 
+    } finally {
+      localStorage.removeItem('invitedToken');
     }
   }
 
