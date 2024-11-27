@@ -26,9 +26,8 @@ function ForgotPasswordPage() {
     });
     const submit = async (data: ForgotPasswordFormValues) => {
         await forgotPassword(data).unwrap();
-        console.log('this data :', data);
     }
-    if (!isSuccess) {
+    if (isSuccess) {
         return (
             <div className='flex flex-col items-center justify-center gap-4'>
                 <svg

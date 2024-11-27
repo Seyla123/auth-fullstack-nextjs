@@ -123,7 +123,7 @@ export const TableComponent = ({
                     return <TableCell key={index}>{(user as Record<string, string>)[item]}</TableCell>;
                   })}
                   <TableCell>
-                    {(tableType == 'invitedUser' && (user as invitedUser)?.status !== 'accepted') ?
+                    {(tableType == 'invitedUser' && (user as invitedUser)?.status !== 'accepted' && onResendInvite) ?
                       <DropdownAction
                         handleEdit={() => handleEdit(String(user?.id))}
                         handleDelete={() => handleDelete(String(user?.id))}
