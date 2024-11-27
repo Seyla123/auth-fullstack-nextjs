@@ -1,8 +1,8 @@
-import { useState } from 'react'
 import Image from 'next/image'
-export const AuthLayout = ({ img, title, children }: { title?: string | null, img: any, children: React.ReactNode }) => {
+import { cn } from '@/lib/utils'
+export const AuthLayout = ({ img, title, children, className }: { title?: string | null, img: any, children: React.ReactNode, className?: string }) => {
     return (
-        <main className='flex h-screen  items-center justify-center bg-white'>
+        <main className={cn('flex h-screen  items-center justify-center bg-white', className)}>
             <section className='shadow-lg flex h-full py-3 px-3 rounded  w-full   justify-center '>
                 <div className='lg:max-w-[40%] w-full flex justify-center  '>
                     <div className='max-w-[400px]  w-full flex flex-col justify-center lg:px-6'>
