@@ -13,8 +13,8 @@ import { ErrorVerification } from '@/app/(auth)/register-invited-user/page';
 function VerifyEmailPage() {
     const [verifySignup, { isLoading, isSuccess, error }] = useVerifySignupMutation();
     const searchParams = useSearchParams()
-
     const token = searchParams.get('token')
+    
     useEffect(() => {
         verifySignup(token);
     }, [token])

@@ -19,6 +19,7 @@ import { RegisterUserByInviteFormSchema, RegisterUserByInviteFormValues } from '
 import Loading from '@/components/Loading';
 import Image from 'next/image';
 import ErrorImg from '@/public/fail-warning.svg'
+import { GoBackButton } from '@/components/GoBackButton';
 function RegisterInvitedUserPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -146,28 +147,24 @@ function RegisterInvitedUserPage() {
 
 export default RegisterInvitedUserPage;
 
-export const ErrorVerification = () => {
+export const ErrorVerification = ({ title }: { title?: string }) => {
   return (
     <div className='flex flex-col items-center justify-center gap-4'>
       <Image src={ErrorImg} alt="error" width={300} height={300} />
       <p className='text-center text-lg font-semibold text-dark-1'>
-        Invalid or expired link
+        {title || ' Invalid or expired link'}
       </p>
-      <Link href='/sign-in'>
-        <Button className='py-6 px-6 ' defaultColor>
-          Back to Sign In
-        </Button>
-      </Link>
+      <GoBackButton title={'Back to Sign In'} link={'/sign-in'} />
     </div>
   )
 }
-const LoadingVerify = () => {
+export const LoadingVerify = ({ title }: { title?: string }) => {
   return (
     <>
       <h1 className='text-3xl text-center font-bold mb-4'>
         Please wait a moment
       </h1>
-      <Loading title='Verifying your invition link' />
+      <Loading title={title || 'Verifying your invition link'} />
     </>
   )
 }

@@ -89,6 +89,7 @@ export const GET = catchAsync(async (req: NextRequest) => {
     return NextResponse.json({
         status: "success",
         message: "Reset password token is valid",
-        token
+        token,
+        stmt
     })
 })
