@@ -8,19 +8,18 @@ import { ErrorDataType } from '@/app/(auth)/sign-in/[[...sign-in]]/page';
 function VerifyInvitationPage() {
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
-    const [verifyInvitation, { data, isLoading, isSuccess, error }] = useVerifyInvitationMutation();
-    const router = useRouter();  // Initialize the router
+    const [verifyInvitation, { isSuccess, error }] = useVerifyInvitationMutation();
+    const router = useRouter();
 
     useEffect(() => {
         if (token) {
             verifyInvitation(token);
         }
-    }, [token, searchParams]);
+    }, [verifyInvitation, token]);
 
     useEffect(() => {
         if (isSuccess) {
-            // Remove the token from the URL once the invitation is successful
-            router.replace(window.location.pathname); // This replaces the current URL without the query params
+            router.replace(window.location.pathname); 
         }
     }, [isSuccess, router]);
 
