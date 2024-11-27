@@ -38,7 +38,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
           `).all();
 
         const user = JSON.parse(req.headers.get('user')!);
-        const url = `${req.nextUrl.origin || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-invitation?token=${token}`;
+        const url = `${req.nextUrl.origin || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/register-invited-user?token=${token}`;
         const dataSend =
         {
             "invitedLink": url,
