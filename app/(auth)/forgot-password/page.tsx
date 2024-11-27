@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { ErrorDataType } from "@/app/(auth)/sign-in/[[...sign-in]]/page";
 import { CircleX } from 'lucide-react';
 import Loading from '@/components/Loading'
+import { GoBackButton } from '@/components/GoBackButton'
 
 function ForgotPasswordPage() {
     const [forgotPassword, { isLoading, isSuccess, error }] = useForgotPasswordMutation();
@@ -27,14 +28,47 @@ function ForgotPasswordPage() {
         await forgotPassword(data).unwrap();
         console.log('this data :', data);
     }
-    if (isSuccess) {
-        return <div>Email sent successfully, please check your inbox.</div>
+    if (!isSuccess) {
+        return (
+            <div className='flex flex-col items-center justify-center gap-4'>
+                <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    className='h-16 w-16 text-green-600'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                >
+                    <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                    />
+                </svg>
+                <h1 className='text-3xl text-center font-bold '>
+                    Email sent successfully
+                </h1>
+                <p className='text-center text-medium  text-dark-1'>
+                We have sent a password reset link to your email. Please check your{' '}
+                    <a
+                        href='https://mail.google.com/'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-blue-600 underline'
+                    >
+                        Email.
+                    </a>{' '}
+                </p>
+
+                <GoBackButton title='Back to Sign In' link='/sign-in' />
+
+            </div>
+        )
     }
     if (error) {
         const errorData = error as ErrorDataType
         return (
             <div className='flex flex-col items-center justify-center gap-4'>
-                {/* <Image src={ForgotPasswordImageError} alt="error" width={300} height={300} /> */}
                 <CircleX color='red' size={100} />
                 <h1 className='text-3xl text-center font-bold '>
                     Something went wrong
