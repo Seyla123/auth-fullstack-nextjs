@@ -32,15 +32,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
         stmt.run(email, role, hashedToken, formattedDate, Number(currentUserId));
 
         const allData = db.prepare(`
-            SELECT 
-            invites.id as id ,
-            invites.email as email,
-            invites.role as role,
-            invites.expiredAt as expiredAt,
-            invites.createdAt as createdAt,
-            invites.invitedBy as invitedBy,
-            users.username as invitedByUsername, 
-            users.email as invitedByEmail
+            SELECT invites.*,users.username as invitedByUsername, users.email as invitedByEmail
             FROM invites
             LEFT JOIN users ON invites.invitedBy = users.id
           `).all();
@@ -80,16 +72,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
 
 export const GET = catchAsync(async () => {
     const allData = db.prepare(`
-        SELECT 
-            invites.id as id ,
-            invites.email as email,
-            invites.role as role,
-            invites.status as status,
-            invites.expiredAt as expiredAt,
-            invites.createdAt as createdAt,
-            invites.invitedBy as invitedBy,
-            users.username as invitedByUsername, 
-            users.email as invitedByEmail
+        SELECT invites.*,users.username as invitedByUsername, users.email as invitedByEmail
         FROM invites
         LEFT JOIN users ON invites.invitedBy = users.id
       `).all();
