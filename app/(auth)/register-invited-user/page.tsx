@@ -1,10 +1,10 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useVerifyInvitationMutation, useRegisterUserByInviteMutation } from '@/lib/client/services/authApi';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';  // Import useRouter
 import { ErrorDataType } from '@/app/(auth)/sign-in/[[...sign-in]]/page';
-import { toast, useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { AuthLayout } from '@/components/AuthLayout';
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -25,7 +25,7 @@ function RegisterInvitedUserPage() {
   const [verifyInvitation, { isSuccess, error, isLoading: verifyLoading }] = useVerifyInvitationMutation();
   const { toast } = useToast()
 
-  const [registerUser, { isSuccess: registerSuccess, isLoading, error: registerError }] = useRegisterUserByInviteMutation();
+  const [registerUser, { isLoading }] = useRegisterUserByInviteMutation();
   const router = useRouter();
   const {
     register,
@@ -35,7 +35,7 @@ function RegisterInvitedUserPage() {
     resolver: zodResolver(RegisterUserByInviteFormSchema),
   });
 
-  // save token to local storage for registration
+
   useEffect(() => {
     if (token) {
       verifyInvitation(token);
@@ -46,6 +46,7 @@ function RegisterInvitedUserPage() {
 
   }, [verifyInvitation]);
 
+
   useEffect(() => {
     if (isSuccess) {
       if (token) {
@@ -54,6 +55,7 @@ function RegisterInvitedUserPage() {
       router.replace(window.location.pathname);
     }
   }, [isSuccess, router]);
+
   const onSubmit = async (data: RegisterUserByInviteFormValues) => {
     try {
       const invitedToken = token || localStorage.getItem('invitedToken');
@@ -120,7 +122,7 @@ function RegisterInvitedUserPage() {
                     {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
                   </div>
 
-                  <Button disabled={isLoading} type='submit' className='py-6 bg-dark-4'>
+                  <Button disabled={isLoading} defaultColor type='submit' className='py-6'>
                     {isLoading ? (
                       <>
                         <Loading title='Registering...' />
@@ -134,7 +136,6 @@ function RegisterInvitedUserPage() {
                   </p>
                 </Link>
               </> : <LoadingVerify />
-
           )
       }
 
@@ -153,7 +154,7 @@ export const ErrorVerification = () => {
         Invalid or expired link
       </p>
       <Link href='/sign-in'>
-        <Button className='py-6 px-6 bg-dark-4'>
+        <Button className='py-6 px-6 ' defaultColor>
           Back to Sign In
         </Button>
       </Link>

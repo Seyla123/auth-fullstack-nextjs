@@ -44,7 +44,7 @@ const VerifyEmailSuccess = () => {
                 Your email has been verified successfully.
             </p>
             <Link href='/'>
-                <Button className='py-6 px-6 bg-dark-4'>
+                <Button defaultColor className='py-6 px-6'>
                     Go to Home
                 </Button>
             </Link>

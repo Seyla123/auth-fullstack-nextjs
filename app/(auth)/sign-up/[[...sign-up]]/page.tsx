@@ -91,7 +91,7 @@ function Signup() {
           {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
         </div>
 
-        <Button disabled={isLoading} type='submit' className='py-6 bg-dark-4'>
+        <Button disabled={isLoading} type='submit' className='py-6 ' defaultColor>
           {isLoading ? (
             <>
               <Loading title='Sign Up...' />
