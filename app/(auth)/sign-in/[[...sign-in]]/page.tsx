@@ -12,16 +12,16 @@ import { useSigninMutation } from '@/lib/client/services/authApi'
 import Loading from '@/components/Loading'
 import Link from 'next/link'
 import { PasswordInput } from '@/components/ui/password-input'
-import { useState } from 'react'
-import Image from 'next/image'
+
 import AngkorImg from '@/public/angkor-img.jpg'
+import { AuthLayout } from '@/components/AuthLayout'
 export type ErrorDataType = { data: { message: string } }
 
 function Signin() {
   const router = useRouter();
   const { toast } = useToast()
   const [signin, { isLoading }] = useSigninMutation()
-  const [currentPassword, setCurrentPassword] = useState("")
+
   const {
     register,
     handleSubmit,
@@ -54,72 +54,58 @@ function Signin() {
     }
   }
 
-
   return (
 
-    <main className='flex h-screen  items-center justify-center '>
-      <section className='shadow-lg flex h-full py-3 px-3 rounded  w-full   justify-center '>
-        <div className='max-w-[40%] w-full flex justify-center  '>
-          <div className='max-w-[400px] min-w-[300px] w-full flex flex-col justify-center px-6'>
-            <h1 className='text-3xl text-center font-bold mb-4'>
-              Sign In
-            </h1>
-            <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4 '>
-              <div className='grid w-full   items-center gap-1.5'>
-                <Label htmlFor='email' >
-                  Email <sup className='text-red-500 font-bold text-sm'>*</sup>
-                </Label>
-                <div>
-                  <Input
-                    placeholder='example@mail.com'
-                    type='text'
-                    {...register('email')}
-                    className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.email })}
-                  />
-                  {/* {errors?.email && <p className="text-red-500 text-[12px]">{errors.email}</p>} */}
-                  {errors.email && <span className="text-red-500 text-[12px]">{String(errors?.email?.message)}</span>}
-                </div>
+    <AuthLayout img={AngkorImg} title='Welcome back'>
 
-              </div>
-              <div className='grid w-full  items-center gap-1.5'>
-                <Label htmlFor='password' >
-                  Password <sup className='text-red-500 font-bold text-sm'>*</sup>
-                </Label>
-                <PasswordInput
-                  placeholder='password'
-                  {...register('password')}
-                  className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.password })}
-                />
-                {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
-              </div>
+      <>
+        <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4 '>
+          <div className='grid w-full  items-center gap-1.5'>
+            <Label htmlFor='email' >
+              Email <sup className='text-red-500 font-bold text-sm'>*</sup>
+            </Label>
+            <div>
+              <Input
+                placeholder='example@mail.com'
+                type='text'
+                disabled={isLoading}
+                {...register('email')}
+                className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 py-6', { 'border-red-500': errors?.email })}
+              />
+              {errors.email && <span className="text-red-500 text-[12px]">{String(errors?.email?.message)}</span>}
+            </div>
 
-              <Button disabled={isLoading} type='submit' className='bg-dark-4'>
-
-                {isLoading ? (
-                  <>
-                    <Loading title='Sign in...' />
-                  </>
-                ) : 'Sign in'}
-              </Button>
-            </form>
-            <Link href='/sign-up'>
-              <p className='text-center text-sm mt-4'>
-                Don&apos;t have an account? Sign up
-              </p>
-            </Link>
           </div>
-        </div>
-        <div className="h-full w-full bg-dark-2 rounded-3xl hidden lg:block relative">
-          <Image
-            src={AngkorImg}
-            alt="auth"
-            fill // Makes the image fill the parent div
-            className="object-cover rounded-3xl"
-          />
-        </div>
+          <div className='grid w-full  items-center gap-1.5'>
+            <Label htmlFor='password' >
+              Password <sup className='text-red-500 font-bold text-sm'>*</sup>
+            </Label>
+            <PasswordInput
+              placeholder='password'
+              {...register('password')}
+              disabled={isLoading}
+              className={cn('py-6 focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.password })}
+            />
+            {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
+          </div>
 
-      </section>
-    </main>
+          <Button disabled={isLoading} type='submit' className='py-6 bg-dark-4'>
+
+            {isLoading ? (
+              <>
+                <Loading title='Sign in...' />
+              </>
+            ) : 'Sign in'}
+          </Button>
+        </form>
+        <Link href='/sign-up'>
+          <p className='text-center text-sm mt-4'>
+            Don&apos;t have an account? Sign up
+          </p>
+        </Link>
+      </>
+
+    </AuthLayout>
   )
 }
 
