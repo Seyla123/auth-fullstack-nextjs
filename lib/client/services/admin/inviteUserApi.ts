@@ -31,11 +31,11 @@ export const inviteUserApi = baseApi.injectEndpoints({
         //get all invited users
         getAllInviteUsers: builder.query<DefaultResponse, void>({
             query: () => ({
-                url: '/admin/users/invite', 
+                url: '/admin/users/invite',
                 method: 'GET',
                 credentials: 'include',
             }),
-            providesTags: ['Invite'], 
+            providesTags: ['Invite'],
         }),
         // invite user
         inviteUser: builder.mutation<InviteUserResponse, InviteUserFormValues>({
@@ -77,7 +77,16 @@ export const inviteUserApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Invite'],
         }),
-        
+        // resend invitation to invited users
+        resendInvitation: builder.mutation<InviteUserResponse, string>({
+            query: (id) => ({
+                url: `/admin/users/invite/${id}/resend`,
+                method: 'POST',
+                credentials: 'include',
+            }),
+            invalidatesTags: ['Invite'],
+        }),
+
     }),
     overrideExisting: false,
 });
@@ -87,5 +96,6 @@ export const {
     useInviteUserMutation,
     useVerifyInviteUserMutation,
     useDeleteInvitedUserMutation,
-    useDeleteManyInvitedUserMutation
+    useDeleteManyInvitedUserMutation,
+    useResendInvitationMutation,
 } = inviteUserApi;

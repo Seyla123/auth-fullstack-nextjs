@@ -4,12 +4,16 @@ import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 import { ErrorDataType } from "@/app/(auth)/sign-in/[[...sign-in]]/page";
-import { useGetAllInviteUsersQuery, useDeleteInvitedUserMutation, useDeleteManyInvitedUserMutation } from "@/lib/client/services/admin/inviteUserApi";
+import {
+    useGetAllInviteUsersQuery,
+    useDeleteInvitedUserMutation,
+    useDeleteManyInvitedUserMutation,
+    useResendInvitationMutation,
+} from "@/lib/client/services/admin/inviteUserApi";
 import { TableComponent } from "@/components/TableComponent";
 import { invitedUser } from "@/lib/server/utils/authUtils";
 
 export default function Home() {
-
     // useGetAllUsersQuery : hook to fetch user data
     const { data: users, isSuccess, isLoading } = useGetAllInviteUsersQuery();
     // useDeleteUserMutation : Mutation hook to handle user deletion
@@ -20,16 +24,23 @@ export default function Home() {
     const [deleteManyInvitedUsers, { isLoading: isDeleteManyLoading }] =
         useDeleteManyInvitedUserMutation();
 
+    //use ResendInvitationMutation : Mutation hook to handle resending invitation
+    const [resendInvitedUser, { isLoading: isResendInviteLoading }] =
+        useResendInvitationMutation();
+
     // state for users data
     const [usersData, setUsersData] = useState<invitedUser[]>([]);
 
     // State to control the visibility of the delete confirmation modal
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-    const [isDeleteManyModalOpen, setIsDeleteManyModalOpen] = useState<boolean>(false);
-    const [isResendInviteModalOpen, setIsResendInviteModalOpen] = useState<boolean>(false);
+    const [isDeleteManyModalOpen, setIsDeleteManyModalOpen] =
+        useState<boolean>(false);
+    const [isResendInviteModalOpen, setIsResendInviteModalOpen] =
+        useState<boolean>(false);
 
     // State to store the ID of the user to be selected
-    const [selectedInvitedUserId, setSelectedInvitedUserId] = useState<string>("");
+    const [selectedInvitedUserId, setSelectedInvitedUserId] =
+        useState<string>("");
     const [selectedManyInvitedUserId, setSelectedManyInvitedUserId] = useState<string[]>([]);
 
     useEffect(() => {
@@ -44,8 +55,13 @@ export default function Home() {
                 title: "Deleting",
                 description: "Deleting invited users data",
             });
+        } else if (isResendInviteLoading) {
+            toast({
+                title: "Resending Invitation...",
+                description: "Resending invitation",
+            });
         }
-    }, [isDeleteLoading, isDeleteManyLoading]);
+    }, [isDeleteLoading, isDeleteManyLoading, isResendInviteLoading]);
 
     //function to delete one invited user
     const deleteInvitedUser = async (id: string | number) => {
@@ -71,20 +87,34 @@ export default function Home() {
             toast({
                 title: "Delete Success",
                 description: "Invited users deleted successfully",
-            })
+            });
         } catch (error) {
             toast({
                 title: "Failed to delete users",
-                description: (error as ErrorDataType).data.message || 'Some error occurred',
+                description:
+                    (error as ErrorDataType).data.message || "Some error occurred",
                 variant: "destructive",
-            })
+            });
         }
-    }
-    // function to resend invite user 
-    const resendInvitation = (id:string)=>{
-        console.log('resend id :', id);
-        // handle resend invite logic here
-    }
+    };
+    // function to resend invite user
+    const resendInvitation = async (id: string) => {
+        console.log("resend id :", id);
+        try {
+            await resendInvitedUser(id).unwrap();
+            toast({
+                title: "Resend Success",
+                description: "Invite sent successfully to the user",
+            });
+        } catch (error) {
+            const errorData = error as ErrorDataType;
+            toast({
+                title: "Failed to resend invite",
+                description: errorData?.data?.message || "Failed to resend invite",
+                variant: "destructive",
+            });
+        }
+    };
 
     // handle click on delete one user and open confirm modal
     const handleDelete = (id: string) => {
@@ -93,30 +123,45 @@ export default function Home() {
     };
 
     const handleView = (id: string) => {
-        console.log('view id :', id);
+        console.log("view id :", id);
         setSelectedInvitedUserId(id);
         setIsDeleteModalOpen(true);
-    }
+    };
     const handleEdit = (id: string) => {
-        console.log('edit id :', id);
+        console.log("edit id :", id);
         setSelectedInvitedUserId(id);
         setIsDeleteModalOpen(true);
-    }
+    };
     const handleManyDelete = async (ids: string[]) => {
         setSelectedManyInvitedUserId(ids);
         setIsDeleteManyModalOpen(true);
-    }
+    };
     const handleResendInvite = async (id: string) => {
-        console.log('resend id :', id);
+        console.log("resend id :", id);
         setSelectedInvitedUserId(id);
         setIsResendInviteModalOpen(true);
-
-    }
+    };
     return (
         <>
             <TableComponent
-                header={["ID", "Email", "Role", "Status", "Created", "Expires", "invited by"]}
-                dataColumn={["id", "email", "role", "status", "createdAt", "expiredAt", "invitedByUsername"]}
+                header={[
+                    "ID",
+                    "Email",
+                    "Role",
+                    "Status",
+                    "Created",
+                    "Expires",
+                    "invited by",
+                ]}
+                dataColumn={[
+                    "id",
+                    "email",
+                    "role",
+                    "status",
+                    "createdAt",
+                    "expiredAt",
+                    "invitedByUsername",
+                ]}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
                 onView={handleView}
@@ -128,19 +173,35 @@ export default function Home() {
             />
             <ConfirmDialog
                 isOpen={isDeleteModalOpen}
-                description={<>This action cannot be undone. This will permanently <b>delete this invitation user</b>  and remove data from our servers.</>}
+                description={
+                    <>
+                        This action cannot be undone. This will permanently{" "}
+                        <b>delete this invitation user</b> and remove data from our servers.
+                    </>
+                }
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={() => deleteInvitedUser(selectedInvitedUserId)}
             />
             <ConfirmDialog
                 isOpen={isDeleteManyModalOpen}
-                description={<>This action cannot be undone. This will permanently <b>delete all this invitation user</b>  and remove data from our servers.</>}
+                description={
+                    <>
+                        This action cannot be undone. This will permanently{" "}
+                        <b>delete all this invitation user</b> and remove data from our
+                        servers.
+                    </>
+                }
                 onClose={() => setIsDeleteManyModalOpen(false)}
                 onConfirm={() => deleteManyInvited(selectedManyInvitedUserId)}
             />
             <ConfirmDialog
                 isOpen={isResendInviteModalOpen}
-                description={<>This action will re-send email invitation to this user. If you want to <b>resend invitation</b>  click confirm.</>}
+                description={
+                    <>
+                        This action will re-send email invitation to this user. If you want
+                        to <b>resend invitation</b> click confirm.
+                    </>
+                }
                 onClose={() => setIsResendInviteModalOpen(false)}
                 onConfirm={() => resendInvitation(selectedInvitedUserId)}
                 buttonConfirmStyle="bg-dark-3"
@@ -148,5 +209,3 @@ export default function Home() {
         </>
     );
 }
-
-
