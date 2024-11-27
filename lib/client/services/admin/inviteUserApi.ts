@@ -1,4 +1,3 @@
-import { User } from '@/app/api/auth/sign-in/route';
 import { baseApi } from '@/lib/client/services/baseApi';
 import { InviteUserFormValues } from '@/lib/definitions';
 import { invitedUser } from '@/lib/server/utils/authUtils';
@@ -32,11 +31,11 @@ export const inviteUserApi = baseApi.injectEndpoints({
         //get all invited users
         getAllInviteUsers: builder.query<DefaultResponse, void>({
             query: () => ({
-                url: '/admin/users/invite', // Adjust the path as needed
+                url: '/admin/users/invite', 
                 method: 'GET',
-                credentials: 'include', // Includes cookies for authentication
+                credentials: 'include',
             }),
-            providesTags: ['Invite'], // Tags for caching 
+            providesTags: ['Invite'], 
         }),
         // invite user
         inviteUser: builder.mutation<InviteUserResponse, InviteUserFormValues>({

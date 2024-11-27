@@ -14,9 +14,9 @@ interface SignoutResponse {
 }
 
 interface RegisterUserByInviteFormValues {
-  token: string;
-  password: string;
-  username: string
+  token: string | null;
+  password: string | null;
+  username: string | null;
 }
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -48,7 +48,7 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         credentials: 'include', // Includes cookies for authentication
       }),
-      invalidatesTags: ['Auth'], // Tags for caching and invalidation
+      invalidatesTags: ['Auth'],
     }),
     // check user credentials
     checkAuth: builder.query<DefaultResponse, void>({

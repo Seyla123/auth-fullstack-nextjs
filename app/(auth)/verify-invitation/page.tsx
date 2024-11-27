@@ -1,29 +1,46 @@
 'use client'
-import React, { useEffect } from 'react'
-import { useVerifyInvitationMutation } from '@/lib/client/services/authApi';
+import React, { useEffect, useState } from 'react'
+import { useVerifyInvitationMutation, useRegisterUserByInviteMutation } from '@/lib/client/services/authApi';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';  // Import useRouter
 import { ErrorDataType } from '@/app/(auth)/sign-in/[[...sign-in]]/page';
+import { Button } from '@/components/ui/button';
 
 function VerifyInvitationPage() {
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
     const [verifyInvitation, { isSuccess, error }] = useVerifyInvitationMutation();
+    const [registerUser, { isSuccess: registerSuccess, error: registerError }] = useRegisterUserByInviteMutation();
     const router = useRouter();
+    const [invitedToken, setInvitedToken] = useState<string | null>('')
 
     useEffect(() => {
         if (token) {
+            setInvitedToken(token)
             verifyInvitation(token);
         }
     }, [verifyInvitation, token]);
 
     useEffect(() => {
         if (isSuccess) {
-            router.replace(window.location.pathname); 
+            router.replace(window.location.pathname);
         }
     }, [isSuccess, router]);
+    const handlSubmit = async () => {
+        try {
+            // await registerUser({
+            //     token: invitedToken,
+            //     username: "newusername",
+            //     password: "newpassword123@4"
+            // });
+            console.log('register success');
 
-    console.log('this invitation : ', token);
+        } catch (error) {
+            console.log('error registering user', error);
+
+        }
+    }
+    console.log('this invitation : ', invitedToken);
     if (error) {
         const errorData = error as ErrorDataType;
         console.log('error :', errorData);
@@ -32,7 +49,9 @@ function VerifyInvitationPage() {
     }
 
     if (isSuccess) {
-        return <div>Invitation successful</div>
+        return <div>Invitation successful
+            <Button onClick={handlSubmit}>Register</Button>
+        </div>
     }
 
     return (
