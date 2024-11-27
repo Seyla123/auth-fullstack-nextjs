@@ -8,7 +8,6 @@ interface DefaultResponse {
   data?: User | null;
 }
 
-
 interface RegisterUserByInviteFormValues {
   token: string | null;
   password: string | null;
@@ -17,6 +16,11 @@ interface RegisterUserByInviteFormValues {
 
 interface RequestPasswordResetFormValues {
   email: string;
+}
+
+interface ResetPasswordFormValues {
+  newPassword: string;
+  token: string
 }
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -103,10 +107,10 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
     // reset password
-    resetPassword: builder.mutation<DefaultResponse, { password: string; token: string }>({
+    resetPassword: builder.mutation<DefaultResponse, ResetPasswordFormValues>({
       query: (data) => ({
         url: `/auth/reset-password`,
-        method: 'POST',
+        method: 'PATCH',
         body: data,
         credentials: 'include',
       }),
