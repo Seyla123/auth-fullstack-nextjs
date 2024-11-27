@@ -145,7 +145,7 @@ function RegisterInvitedUserPage() {
 
 export default RegisterInvitedUserPage;
 
-const ErrorVerification = () => {
+export const ErrorVerification = () => {
   return (
     <div className='flex flex-col items-center justify-center gap-4'>
       <Image src={ErrorImg} alt="error" width={300} height={300} />
