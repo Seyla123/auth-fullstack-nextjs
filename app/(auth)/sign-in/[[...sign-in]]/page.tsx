@@ -86,7 +86,11 @@ function Signin() {
             />
             {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
           </div>
-
+          <Link href='/forgot-password'>
+            <p className='text-sm mt-0 text-right text-dark-4 '>
+              Forgot password?
+            </p>
+          </Link>
           <Button disabled={isLoading} type='submit' className='py-6 bg-dark-4'>
 
             {isLoading ? (
@@ -97,7 +101,7 @@ function Signin() {
           </Button>
         </form>
         <Link href='/sign-up'>
-          <p className='text-center text-sm mt-4'>
+          <p className='text-center text-sm mt-4 text-dark-4'>
             Don&apos;t have an account? Sign up
           </p>
         </Link>
