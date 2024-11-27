@@ -127,7 +127,7 @@ export const uncodedJwtToken = (token: string) => {
             throw new AppError("Invalid token format. Please verify the token and try again.", 400);
         }
         // Generic fallback for other JWT errors
-        throw new AppError("An error occurred during token verification.", 500);
+        throw new AppError("This token is invalid", 500);
     }
 
 }

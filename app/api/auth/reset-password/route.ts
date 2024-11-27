@@ -1,12 +1,13 @@
 import { parseJsonBody } from "@/lib/server/helper/parseJsonBody";
 import catchAsync from "@/lib/server/utils/catchAsync";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import AppError from "@/lib/server/utils/appError";
 import { ResetPasswordFormSchema } from "@/lib/definitions";
-import { createSendToken, hashedToken } from "@/lib/server/utils/authUtils";
+import { createSendToken, hashedToken, uncodedJwtToken } from "@/lib/server/utils/authUtils";
 import { db } from "@/lib/initDb";
 import { User } from "@/app/api/auth/sign-in/route";
 import bcrypt from "bcryptjs";
+import { JwtPayload } from "jsonwebtoken";
 
 
 export const PATCH = catchAsync(async (req: NextRequest) => {
@@ -62,3 +63,32 @@ export const PATCH = catchAsync(async (req: NextRequest) => {
     // sign cookies 
     return createSendToken(user, 200, req);
 });
+export const GET = catchAsync(async (req: NextRequest) => {
+    const { searchParams } = new URL(req.url);
+    const token = searchParams.get('token');
+    // check if token no provided
+    if (!token) {
+        throw new AppError("Token are not provided", 400);
+    }
+
+    // uncoded Jwt Token
+    const decoded = uncodedJwtToken(token) as JwtPayload;
+
+    // hashed Verify Token
+    const hashedVerifyToken = hashedToken(decoded.passwordResetToken);
+
+    const stmt = db.prepare(` SELECT * FROM users WHERE passwordResetToken = ? `).get(hashedVerifyToken) as User;
+    if (!stmt || !decoded) {
+        throw new AppError("Token is invalid or has expired.", 404);
+    }
+
+    if (stmt.email !== decoded.email) {
+        throw new AppError("Token does not match the user's email", 401);
+    }
+
+    return NextResponse.json({
+        status: "success",
+        message: "Reset password token is valid",
+        token
+    })
+})
