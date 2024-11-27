@@ -14,12 +14,15 @@ function ConfirmDialog({
     isOpen = true,
     onClose,
     onConfirm,
+    buttonConfirmStyle,
 }: {
     title?: string;
     description?: string | React.ReactNode;
     isOpen?: boolean;
     onClose?: () => void;
     onConfirm?: () => void;
+    buttonConfirmStyle?: string;
+
 }) {
     return (
         <AlertDialog open={isOpen} onOpenChange={() => onClose?.()}>
@@ -37,7 +40,7 @@ function ConfirmDialog({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={onConfirm}
-                        className="bg-red-600 hover:bg-red-400"
+                        className={buttonConfirmStyle ? buttonConfirmStyle : "bg-red-600 hover:bg-red-400"}
                     >
                         Continue
                     </AlertDialogAction>

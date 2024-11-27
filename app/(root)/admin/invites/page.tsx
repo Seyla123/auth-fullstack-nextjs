@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 import { ErrorDataType } from "@/app/(auth)/sign-in/[[...sign-in]]/page";
-
 import { useGetAllInviteUsersQuery, useDeleteInvitedUserMutation, useDeleteManyInvitedUserMutation } from "@/lib/client/services/admin/inviteUserApi";
 import { TableComponent } from "@/components/TableComponent";
 import { invitedUser } from "@/lib/server/utils/authUtils";
@@ -27,9 +26,10 @@ export default function Home() {
     // State to control the visibility of the delete confirmation modal
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
     const [isDeleteManyModalOpen, setIsDeleteManyModalOpen] = useState<boolean>(false);
+    const [isResendInviteModalOpen, setIsResendInviteModalOpen] = useState<boolean>(false);
 
     // State to store the ID of the user to be selected
-    const [selectedInvitedUserId, setSelectedInvitedUserId] = useState<string | number>("");
+    const [selectedInvitedUserId, setSelectedInvitedUserId] = useState<string>("");
     const [selectedManyInvitedUserId, setSelectedManyInvitedUserId] = useState<string[]>([]);
 
     useEffect(() => {
@@ -39,13 +39,13 @@ export default function Home() {
     }, [users, isSuccess]);
 
     useEffect(() => {
-        if (isDeleteLoading) {
+        if (isDeleteLoading || isDeleteManyLoading) {
             toast({
-                title: "Loading",
-                description: "Loading users data",
+                title: "Deleting",
+                description: "Deleting invited users data",
             });
         }
-    }, [isDeleteLoading]);
+    }, [isDeleteLoading, isDeleteManyLoading]);
 
     //function to delete one invited user
     const deleteInvitedUser = async (id: string | number) => {
@@ -55,7 +55,7 @@ export default function Home() {
                 title: "Delete Success",
                 description: "User deleted successfully",
             });
-        } catch (error: unknown) {
+        } catch (error) {
             const errorData = error as ErrorDataType;
             toast({
                 title: "Failed to delete user",
@@ -80,8 +80,14 @@ export default function Home() {
             })
         }
     }
+    // function to resend invite user 
+    const resendInvitation = (id:string)=>{
+        console.log('resend id :', id);
+        // handle resend invite logic here
+    }
+
     // handle click on delete one user and open confirm modal
-    const handleDelete = (id: string | number) => {
+    const handleDelete = (id: string) => {
         setSelectedInvitedUserId(id);
         setIsDeleteModalOpen(true);
     };
@@ -100,17 +106,25 @@ export default function Home() {
         setSelectedManyInvitedUserId(ids);
         setIsDeleteManyModalOpen(true);
     }
+    const handleResendInvite = async (id: string) => {
+        console.log('resend id :', id);
+        setSelectedInvitedUserId(id);
+        setIsResendInviteModalOpen(true);
+
+    }
     return (
         <>
             <TableComponent
-                header={["ID", "Email", "Role", "Status", "Created", "Expires","invited by"]}
-                dataColumn={["id", "email", "role", "status", "createdAt", "expiredAt","invitedByUsername"]}
+                header={["ID", "Email", "Role", "Status", "Created", "Expires", "invited by"]}
+                dataColumn={["id", "email", "role", "status", "createdAt", "expiredAt", "invitedByUsername"]}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
                 onView={handleView}
                 data={usersData}
                 isLoading={isLoading}
                 onManyDelete={handleManyDelete}
+                onResendInvite={handleResendInvite}
+                tableType={"invitedUser"}
             />
             <ConfirmDialog
                 isOpen={isDeleteModalOpen}
@@ -123,6 +137,13 @@ export default function Home() {
                 description={<>This action cannot be undone. This will permanently <b>delete all this invitation user</b>  and remove data from our servers.</>}
                 onClose={() => setIsDeleteManyModalOpen(false)}
                 onConfirm={() => deleteManyInvited(selectedManyInvitedUserId)}
+            />
+            <ConfirmDialog
+                isOpen={isResendInviteModalOpen}
+                description={<>This action will re-send email invitation to this user. If you want to <b>resend invitation</b>  click confirm.</>}
+                onClose={() => setIsResendInviteModalOpen(false)}
+                onConfirm={() => resendInvitation(selectedInvitedUserId)}
+                buttonConfirmStyle="bg-dark-3"
             />
         </>
     );
