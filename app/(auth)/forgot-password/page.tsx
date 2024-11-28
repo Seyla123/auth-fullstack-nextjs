@@ -9,7 +9,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/lib/utils'
 import { GoBack } from '@/components/GoBack'
 import { useForgotPasswordMutation } from '@/lib/client/services/authApi';
-import Link from 'next/link'
 import { ErrorDataType } from "@/app/(auth)/sign-in/[[...sign-in]]/page";
 import { CircleX } from 'lucide-react';
 import Loading from '@/components/Loading'
@@ -75,7 +74,7 @@ function ForgotPasswordPage() {
                 <p className='text-center text-medium  text-dark-1'>
                     {errorData?.data?.message || 'Email not found, please try again.'}
                 </p>
-                <GoBackButton title="Back to sign in" link="/sign-in"/>
+                <GoBackButton title="Back to sign in" link="/sign-in" />
             </div>
         )
     }
@@ -86,7 +85,7 @@ function ForgotPasswordPage() {
                     Forgot password?
                 </h1>
                 <p className='text-medium md:text-sm text-gray-500  '>
-                    No worries,  we'll send you an email with instructions to reset your
+                    No worries,  we&apos;ll send you an email with instructions to reset your
                     password.
                 </p>
             </div>

@@ -14,10 +14,11 @@ import Loading from '@/components/Loading';
 import { ResetConfirmPasswordFormSchema, ResetConfirmPasswordFormValues } from '@/lib/definitions';
 import { GoBack } from '@/components/GoBack';
 import { toast } from '@/hooks/use-toast';
+import { GoBackButton } from '@/components/GoBackButton';
 function ResetPasswordPage() {
     const router = useRouter();
     const [verifyResetPassword, { isLoading: verifyLoading, isSuccess, error }] = useVerifyResetPasswordMutation();
-    const [resetPassword, { isLoading }] = useResetPasswordMutation();
+    const [resetPassword, { isLoading, isSuccess: resetSuccess }] = useResetPasswordMutation();
     const searchParams = useSearchParams()
     const token = searchParams.get('token')
 
@@ -55,11 +56,7 @@ function ResetPasswordPage() {
                 resetToken: resetPasswordToken,
                 newPassword: data.password
             }).unwrap();
-            toast({
-                title: 'Success',
-                description: 'You have been successfully registered!',
-            })
-            router.push('/sign-in')
+
         } catch (error) {
             const errorData = error as ErrorDataType;
             console.log('error reset password user', errorData);
@@ -69,15 +66,42 @@ function ResetPasswordPage() {
                 variant: 'destructive',
             })
         } finally {
-            localStorage.removeItem('invitedToken');
+            localStorage.removeItem('resetPasswordToken');
         }
+    }
+    if (resetSuccess) {
+        return (
+            <div className='flex flex-col items-center justify-center gap-4'>
+                <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    className='h-16 w-16 text-green-600'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                >
+                    <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                    />
+                </svg>
+                <h1 className='text-3xl text-center font-bold lg:text-nowrap'>
+                    Password Reset Successful
+                </h1>
+                <p className='text-center text-medium  text-dark-1'>
+                    Your password has been successfully updated. You can now sign in with your new password.
+                </p>
+
+                <GoBackButton title='Back to Sign In' link='/sign-in' />
+            </div>
+        )
     }
     if (verifyLoading) {
         return <LoadingVerify title={'Verifying your reset password link'} />
     }
     if (error) {
         const errorData = error as ErrorDataType;
-        console.log('this : ', error);
         return <ErrorVerification title={errorData?.data?.message} />
     }
     if (isSuccess) {
@@ -127,6 +151,7 @@ function ResetPasswordPage() {
                             ) : 'Reset password'}
                         </Button>
                         <GoBack title='Back to Sign In' link='/sign-in' />
+
                     </form>
                 </div>
             </>
