@@ -37,14 +37,18 @@ export const POST = catchAsync(async (req: NextRequest) => {
             LEFT JOIN users ON invites.invitedBy = users.id
           `).all();
 
+        const host = req.headers.get('host') as string; // e.g., 'localhost:3000' or 'example.com'
+        const protocol = req.headers.get('x-forwarded-proto') || req.nextUrl.protocol; // Ensure HTTPS in production
+
+        const domain = `${protocol}//${host}`;
         const user = JSON.parse(req.headers.get('user')!);
-        const url = `${req.nextUrl.origin || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/register-invited-user?token=${token}`;
+        const url = `${domain || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/register-invited-user?token=${token}`;
         const dataSend =
         {
             "invitedLink": url,
             "invitedBy": user.email
         }
-
+        console.log(req);
         //send email verification token
         await sendMail(email, 4, dataSend)
         // Return a successful response
@@ -55,7 +59,8 @@ export const POST = catchAsync(async (req: NextRequest) => {
                 data: { email, role, invitedBy: currentUserId, allData },
                 token,
                 date: formattedDate,
-                origin : req.nextUrl.origin
+                origin: req.nextUrl.origin,
+                domain
             },
             { status: 201 }
         );
