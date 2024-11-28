@@ -1,5 +1,3 @@
-import { ResendVerificationFormSchema } from "@/lib/definitions";
-import { parseJsonBody } from "@/lib/server/helper/parseJsonBody";
 import AppError from "@/lib/server/utils/appError";
 import catchAsync from "@/lib/server/utils/catchAsync";
 import { NextRequest, NextResponse } from "next/server";
@@ -8,19 +6,14 @@ import { db } from "@/lib/initDb";
 import { sendMail } from "@/lib/server/services/EmailService";
 import { createVerificationToken } from "@/lib/server/utils/authUtils";
 import jwt from "jsonwebtoken";
+import { protect } from "@/middlewares/server/authMiddleware";
 
 
 export const POST = catchAsync(async (req: NextRequest) => {
-    const data = await parseJsonBody(req);
-    // check validation
-    const validatedData = ResendVerificationFormSchema.safeParse(data);
-    if (!validatedData.success) {
-        throw new AppError(validatedData.error.issues[0].message, 400);
-    }
+    protect(req);
+    const currentUser = JSON.parse(req.headers.get('user')!);
 
-    // extract data
-    const { email } = validatedData.data;
-
+    const email = currentUser.email;
     // check if user exists
     const user = db.prepare(`
         SELECT * FROM users WHERE email = ?
