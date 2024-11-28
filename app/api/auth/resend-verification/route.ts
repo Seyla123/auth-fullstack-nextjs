@@ -60,8 +60,10 @@ export const POST = catchAsync(async (req: NextRequest) => {
         WHERE email = ?
       `);
     stmt.run(hashedToken, formattedExpiredDate, currentDate, userRequestTime + 1, email);
-
-    const url = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verifyToken}`;
+    const host = req.headers.get('host') as string; // e.g., 'localhost:3000' or 'example.com'
+    const protocol = req.headers.get('x-forwarded-proto') || req.nextUrl.protocol; // Ensure HTTPS in production
+    const domain = `${protocol}://${host}`;
+    const url = `${domain || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verifyToken}`;
     const dataSend =
     {
         "verify_link": url,

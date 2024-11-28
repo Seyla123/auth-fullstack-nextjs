@@ -39,8 +39,8 @@ export const POST = catchAsync(async (req: NextRequest) => {
 
         const host = req.headers.get('host') as string; // e.g., 'localhost:3000' or 'example.com'
         const protocol = req.headers.get('x-forwarded-proto') || req.nextUrl.protocol; // Ensure HTTPS in production
-
         const domain = `${protocol}://${host}`;
+        
         const user = JSON.parse(req.headers.get('user')!);
         const url = `${domain || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/register-invited-user?token=${token}`;
         const dataSend =
