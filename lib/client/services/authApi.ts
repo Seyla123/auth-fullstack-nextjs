@@ -34,7 +34,6 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Auth'], // Tags for caching and invalidation
     }),
-
     // sign in mutation
     signin: builder.mutation<DefaultResponse, SigninFormValues>({
       query: (user) => ({
@@ -45,7 +44,6 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Auth'],
     }),
-
     // sign out mutation
     signout: builder.mutation<DefaultResponse, void>({
       query: () => ({
@@ -116,6 +114,14 @@ export const authApi = baseApi.injectEndpoints({
         credentials: 'include',
       }),
     }),
+    // resend verification sign up user
+    resendVerificationSignup: builder.mutation<DefaultResponse, void>({
+      query: () => ({
+        url: `/auth/resend-verification`,
+        method: 'POST',
+        credentials: 'include',
+      }),
+    })
   }),
   overrideExisting: false, // Set to true if you want to override existing endpoints
 });
@@ -131,4 +137,5 @@ export const {
   useForgotPasswordMutation,
   useVerifyResetPasswordMutation,
   useResetPasswordMutation,
+  useResendVerificationSignupMutation
 } = authApi;
