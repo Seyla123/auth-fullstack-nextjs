@@ -2,20 +2,28 @@
 
 This project is a full-stack authentication membership system built entirely with **Next.js**, featuring server-side APIs and frontend functionality. It uses **JWT** for authentication, **SQLite** for database management, and **Brevo (Sendinblue)** for sending emails. The system is designed for universal API usage without relying on third-party authentication libraries.
 
----
+
+
 
 ## Features
 
+
 ### Authentication
 - **Sign Up**: Users can register and receive a verification email.
-- **Email Verification**: Verify email addresses (resend verification limited to 3 times per day).
+![Screenshot 2024-11-28 at 8 14 09 PM](https://github.com/user-attachments/assets/95275cf3-61d0-4482-b858-a3ee463de3bd)
 - **Sign In**: Secure login using email and password.
+ ![Screenshot 2024-11-28 at 8 11 35 PM](https://github.com/user-attachments/assets/2fd16446-206f-4c76-9642-3617f971ca6c)
+- **Email Verification**: Verify email addresses (resend verification limited to 3 times per day).
 - **Forgot Password**: Request a password reset email.
 - **Reset Password**: Securely update passwords via a reset token.
 - **Change Password**: Change the current password from within the user account.
+  
+
+
 
 ### User Invitations
-- **Invite Users**: 
+- **Invite Users**:
+ ![Screenshot 2024-11-28 at 8 15 55 PM](https://github.com/user-attachments/assets/a3d7da1a-1aa1-4d3c-a3d4-24337cd7544f)
   - Two roles: **Admin** and **User**.
   - Newly registered users are assigned the **User** role by default.
   - Invited users receive a verification email and can register via an invite link.
