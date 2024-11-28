@@ -55,6 +55,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
                 data: { email, role, invitedBy: currentUserId, allData },
                 token,
                 date: formattedDate,
+                origin : req.nextUrl.origin
             },
             { status: 201 }
         );
