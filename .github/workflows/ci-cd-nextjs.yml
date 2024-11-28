@@ -28,9 +28,3 @@ jobs:
       # Ensure the correct build output directory is specified
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
-
-      # Use the `netlify deploy` command directly for authentication
-      - name: Deploy to Netlify
-        run: |
-          echo "Deploying to production. Site ID: ${{ secrets.NETLIFY_SITE_ID }}"
-          netlify deploy --prod --dir=out --auth=${{ secrets.NETLIFY_API_TOKEN }} --site=${{ secrets.NETLIFY_SITE_ID }}
