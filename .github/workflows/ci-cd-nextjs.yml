@@ -3,7 +3,7 @@ name: CI/CD for Next.js
 on:
   push:
     branches:
-      - main  # Adjust the branch as needed
+      - main  # Adjust as needed
       - feature/add-pipeline
 
 jobs:
@@ -12,24 +12,25 @@ jobs:
     steps:
       - name: Repository Checkout
         uses: actions/checkout@v4
-      - name: Setup NodeJS
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "npm"
-      - name: Install Netlify
-        run:  npm install -g netlify-cli
+
       - name: Install Dependencies
         run: npm ci
-      - name: Build project
-        run: npm run build
-      - name: Netlify Login
-        run: netlify login --token ${{ secrets.NETLIFY_API_TOKEN }}
-      - name: Deploy to Netlify
-        id: netlify_deploy
-        run: |
-          netlify --version
-          echo "Deploying to production. Site ID: $NETLIFY_SITE_ID" 
-          netlify status
-          netlify deploy --dir=out --prod --auth=${{ secrets.NETLIFY_AUTH_TOKEN }} --site=${{ secrets.NETLIFY_SITE_ID }}
 
+      - name: Build Project
+        run: npm run build
+
+      # Ensure the correct build output directory is specified
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      # Use the `netlify deploy` command directly for authentication
+      - name: Deploy to Netlify
+        run: |
+          echo "Deploying to production. Site ID: ${{ secrets.NETLIFY_SITE_ID }}"
+          netlify deploy --prod --dir=out --auth=${{ secrets.NETLIFY_API_TOKEN }} --site=${{ secrets.NETLIFY_SITE_ID }}
