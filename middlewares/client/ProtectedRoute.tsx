@@ -23,13 +23,13 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         if (isSuccess || error) {
             console.log('this login user : ', user);
-            if (user?.emailVerified !== "true") {
-                router.push('/verify-account');
-                return;
-            }
             // If user is not authenticated, protect the routes
             if (!isAuthenticated) {
                 router.push('/sign-in');
+                return;
+            }
+            if (isAuthenticated && user?.emailVerified !== "true") {
+                router.push('/verify-account');
                 return;
             }
             if (pathname == '/') {
