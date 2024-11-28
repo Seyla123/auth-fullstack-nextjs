@@ -48,7 +48,7 @@ function ForgotPasswordPage() {
                     Email sent successfully
                 </h1>
                 <p className='text-center text-medium  text-dark-1'>
-                We have sent a password reset link to your email. Please check your{' '}
+                    We have sent a password reset link to your email. Please check your{' '}
                     <a
                         href='https://mail.google.com/'
                         target='_blank'
@@ -75,11 +75,7 @@ function ForgotPasswordPage() {
                 <p className='text-center text-medium  text-dark-1'>
                     {errorData?.data?.message || 'Email not found, please try again.'}
                 </p>
-                <Link href='/sign-in'>
-                    <Button className='py-6 px-6 ' defaultColor>
-                        Back to Sign In
-                    </Button>
-                </Link>
+                <GoBackButton title="Back to sign in" link="/sign-in"/>
             </div>
         )
     }
