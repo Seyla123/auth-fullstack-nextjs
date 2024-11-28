@@ -7,20 +7,14 @@ on:
       - feature/add-pipeline
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+  test-job:
+    runs-on: ubuntu-latest  # Use the latest version of Ubuntu
 
     steps:
-      # Step 1: Checkout the code from the repository
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # Checks out the repository code
 
-      # Step 2: Set up Node.js container with Alpine
-      - name: Set up Node.js container
-        uses: docker://node:20-alpine  # Using Node.js 20 with Alpine
-        with:
-          args: |
-            sh -c '
-            npm install &&
-            npm run build
-            '
+      - name: Run a Simple Script
+        run: echo "Hello, GitHub Actions is working!"
+
+
