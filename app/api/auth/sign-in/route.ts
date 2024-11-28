@@ -70,10 +70,6 @@ export const POST = catchAsync(async (req: NextRequest) => {
     if (user.active !== 'true') {
         throw new AppError("Your account is currently deactivated. Please reach out to support.", 401);
     }
-    // // Check if the user is verified
-    // if (user.emailVerified !== 'true') {
-    //     throw new AppError("Email verification is pending. Check your inbox for the verification link.", 200);
-    // }
 
     // Send the token and user data
     return createSendToken(user, 200, req);
