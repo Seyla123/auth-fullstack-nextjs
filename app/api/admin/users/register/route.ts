@@ -20,8 +20,6 @@ export const POST = catchAsync(async (req: NextRequest) => {
             throw new AppError(`Invite token not found`, 404);
         }
 
-
-
         // Start a transaction
         db.exec('BEGIN TRANSACTION');
         const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(inviteToken.email);

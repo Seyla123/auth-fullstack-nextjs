@@ -15,13 +15,18 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     const userRoute = ['/users'];
     // Track loading and redirection state
     const [isRedirecting, setIsRedirecting] = useState(true);
-    
+
     console.log('pathname ', pathname);
     const { isLoading, isSuccess, error } = useCheckAuthQuery();
     const { isAuthenticated, user } = useSelector((state: { auth: AuthState }) => state.auth);
     // Redirect logic inside useEffect to avoid triggering it during rendering
     useEffect(() => {
         if (isSuccess || error) {
+            console.log('this login user : ', user);
+            if (user?.emailVerified !== "true") {
+                router.push('/verify-account');
+                return;
+            }
             // If user is not authenticated, protect the routes
             if (!isAuthenticated) {
                 router.push('/sign-in');

@@ -12,15 +12,15 @@ import { useSigninMutation } from '@/lib/client/services/authApi'
 import Loading from '@/components/Loading'
 import Link from 'next/link'
 import { PasswordInput } from '@/components/ui/password-input'
-import { useState } from 'react'
-
+import AngkorImg from '@/public/angkor-img.jpg'
+import { AuthLayout } from '@/components/AuthLayout'
 export type ErrorDataType = { data: { message: string } }
 
 function Signin() {
   const router = useRouter();
   const { toast } = useToast()
   const [signin, { isLoading }] = useSigninMutation()
-  const [currentPassword, setCurrentPassword] = useState("")
+
   const {
     register,
     handleSubmit,
@@ -34,9 +34,8 @@ function Signin() {
       const response = await signin(data).unwrap();
       toast({
         title: 'Success',
-        description: 'You have been successfully signed up!',
+        description: 'You have been successfully signed in!',
       })
-      console.log('this role :', response);
 
       if (response?.data?.role == 'admin') {
         router.push('/admin/users')
@@ -47,54 +46,51 @@ function Signin() {
       const errorData = error as ErrorDataType;
       toast({
         title: 'Error',
-        description: errorData?.data?.message || 'Failed to sign up',
+        description: errorData?.data?.message || 'Failed to sign in',
         variant: 'destructive',
       })
     }
   }
 
-
   return (
 
-    <main className='flex  min-h-screen items-center justify-center'>
-      <section className='shadow-lg py-6 px-4 rounded max-w-sm w-full bg-white'>
-        <h1 className='text-3xl text-center font-bold mb-4'>
-          Sign In
-        </h1>
+    <AuthLayout img={AngkorImg} title='Welcome back'>
+      <>
         <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4 '>
-          <div className='grid w-full   items-center gap-1.5'>
-            <Label htmlFor='email'>
-              Email
+          <div className='grid w-full  items-center gap-1.5'>
+            <Label htmlFor='email' >
+              Email <sup className='text-red-500 font-bold text-sm'>*</sup>
             </Label>
             <div>
               <Input
                 placeholder='example@mail.com'
                 type='text'
+                disabled={isLoading}
                 {...register('email')}
-                className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.email })}
+                className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 py-6', { 'border-red-500': errors?.email })}
               />
-              {/* {errors?.email && <p className="text-red-500 text-[12px]">{errors.email}</p>} */}
               {errors.email && <span className="text-red-500 text-[12px]">{String(errors?.email?.message)}</span>}
             </div>
 
           </div>
           <div className='grid w-full  items-center gap-1.5'>
-            <Label htmlFor='password'>
-              Password
+            <Label htmlFor='password' >
+              Password <sup className='text-red-500 font-bold text-sm'>*</sup>
             </Label>
             <PasswordInput
               placeholder='password'
-              value={currentPassword}
               {...register('password')}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              autoComplete="current-password"
-              className={cn(' focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.password })}
+              disabled={isLoading}
+              className={cn('py-6 focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.password })}
             />
             {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
           </div>
-
-          <Button disabled={isLoading} type='submit' className='bg-dark-4'>
-
+          <Link href='/forgot-password'>
+            <p className='text-sm mt-0 text-right text-dark-4 '>
+              Forgot password?
+            </p>
+          </Link>
+          <Button disabled={isLoading} type='submit' className='py-6 bg-dark-4'>
             {isLoading ? (
               <>
                 <Loading title='Sign in...' />
@@ -103,12 +99,12 @@ function Signin() {
           </Button>
         </form>
         <Link href='/sign-up'>
-          <p className='text-center text-sm mt-4'>
+          <p className='text-center text-sm mt-4 text-dark-4'>
             Don&apos;t have an account? Sign up
           </p>
         </Link>
-      </section>
-    </main>
+      </>
+    </AuthLayout>
   )
 }
 

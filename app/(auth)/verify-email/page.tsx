@@ -2,29 +2,62 @@
 import React, { useEffect } from 'react'
 import { useVerifySignupMutation } from '@/lib/client/services/authApi';
 import { useSearchParams } from 'next/navigation';
-import { ErrorDataType } from '@/app/(auth)/sign-in/[[...sign-in]]/page';
-function VerifyPage() {
-    const [verifySignup, { data, isLoading, isSuccess, error }] = useVerifySignupMutation();
+import AngkorImg from '@/public/temple.jpg'
+import { AuthLayout } from '@/components/AuthLayout';
+import Loading from '@/components/Loading';
+import SuccessImage from "@/public/verify-email-succes.svg"
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ErrorVerification } from '@/app/(auth)/register-invited-user/page';
+function VerifyEmailPage() {
+    const [verifySignup, { isLoading, isSuccess, error }] = useVerifySignupMutation();
     const searchParams = useSearchParams()
-
     const token = searchParams.get('token')
-    console.log('search :', token);
+    
     useEffect(() => {
-        verifySignup(token)
+        verifySignup(token);
     }, [token])
-    if (error) {
-        const errorData = error as ErrorDataType;
-        console.log('error :', errorData);
-        return <div>error : {errorData?.data?.message} </div>
-    }
-    if (isSuccess) {
-        return <div>verify Invitation link successful</div>
-    }
+
     return (
-        <div className='w-full flex justify-center h-screen'>
-            verifying...
-        </div>
+        <AuthLayout img={AngkorImg} >
+
+            {isLoading ?
+                <LoadingVerify />
+                : isSuccess ?
+                    <VerifyEmailSuccess />
+                    : !isLoading && error ?
+                        <ErrorVerification />
+                        :
+                        <LoadingVerify />
+            }
+        </AuthLayout>
     )
 }
 
-export default VerifyPage
+export default VerifyEmailPage;
+const VerifyEmailSuccess = () => {
+    return (
+        <div className='flex flex-col items-center justify-center gap-4'>
+            <Image src={SuccessImage} alt="success" width={300} height={300} />
+            <p className='text-center text-lg font-semibold text-dark-1'>
+                Your email has been verified successfully.
+            </p>
+            <Link href='/'>
+                <Button defaultColor className='py-6 px-6'>
+                    Go to Home
+                </Button>
+            </Link>
+        </div>
+    )
+}
+const LoadingVerify = () => {
+    return (
+        <>
+            <h1 className='text-3xl text-center font-bold mb-4'>
+                Please wait a minutes
+            </h1>
+            <Loading title='We verifying your account' />
+        </>
+    )
+}

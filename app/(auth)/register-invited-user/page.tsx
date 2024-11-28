@@ -1,44 +1,78 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useVerifyInvitationMutation, useRegisterUserByInviteMutation } from '@/lib/client/services/authApi';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';  // Import useRouter
 import { ErrorDataType } from '@/app/(auth)/sign-in/[[...sign-in]]/page';
-import { Button } from '@/components/ui/button';
-import { toast } from '@/hooks/use-toast';
-
+import { useToast } from '@/hooks/use-toast';
+import { AuthLayout } from '@/components/AuthLayout';
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
+import AngkorImg from '@/public/temple.jpg'
+import { PasswordInput } from '@/components/ui/password-input'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { RegisterUserByInviteFormSchema, RegisterUserByInviteFormValues } from '@/lib/definitions';
+import Loading from '@/components/Loading';
+import Image from 'next/image';
+import ErrorImg from '@/public/fail-warning.svg'
+import { GoBackButton } from '@/components/GoBackButton';
 function RegisterInvitedUserPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
-  const [verifyInvitation, { isSuccess, error }] = useVerifyInvitationMutation();
-  const [registerUser, { isSuccess: registerSuccess, error: registerError }] = useRegisterUserByInviteMutation();
+  const [verifyInvitation, { isSuccess, error, isLoading: verifyLoading }] = useVerifyInvitationMutation();
+  const { toast } = useToast()
+
+  const [registerUser, { isLoading }] = useRegisterUserByInviteMutation();
   const router = useRouter();
-  const [invitedToken, setInvitedToken] = useState<string | null>('')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterUserByInviteFormValues>({
+    resolver: zodResolver(RegisterUserByInviteFormSchema),
+  });
+
 
   useEffect(() => {
     if (token) {
-      setInvitedToken(token)
       verifyInvitation(token);
+    } else {
+      const tokenLocal = localStorage.getItem('invitedToken');
+      verifyInvitation(tokenLocal);
     }
+
   }, [verifyInvitation, token]);
+
 
   useEffect(() => {
     if (isSuccess) {
+      if (token) {
+        localStorage.setItem('invitedToken', token);
+      }
       router.replace(window.location.pathname);
     }
-  }, [isSuccess, router]);
-  const handlSubmit = async () => {
+  }, [isSuccess, router, token]);
+
+  const onSubmit = async (data: RegisterUserByInviteFormValues) => {
     try {
-      // await registerUser({
-      //     token: invitedToken,
-      //     username: "newusername2",
-      //     password: "newpassword123@4"
-      // });
-      console.log('register success');
+      const invitedToken = token || localStorage.getItem('invitedToken');
+      const response = await registerUser({
+        token: invitedToken,
+        ...data
+      }).unwrap();
       toast({
         title: 'Success',
         description: 'You have been successfully registered!',
       })
+      if (response?.data?.role == 'admin') {
+        router.push('/admin/users')
+      } else {
+        router.push('/users')
+      }
 
     } catch (error) {
       const errorData = error as ErrorDataType;
@@ -49,25 +83,89 @@ function RegisterInvitedUserPage() {
         variant: 'destructive',
       })
 
+    } finally {
+      localStorage.removeItem('invitedToken');
     }
-  }
-  console.log('this invitation : ', invitedToken);
-  if (error) {
-    const errorData = error as ErrorDataType;
-    console.log('error :', errorData);
-
-    return <div>error : {errorData.data?.message}</div>
-  }
-
-  if (isSuccess) {
-    return <div>Invitation successful
-      <Button onClick={handlSubmit}>Register</Button>
-    </div>
   }
 
   return (
-    <div>Verify...</div>
+    <AuthLayout img={AngkorImg} title={isSuccess ? 'Complete Registration' : ''}>
+      {
+        verifyLoading ? <LoadingVerify />
+          :
+          (!verifyLoading && error ?
+            <ErrorVerification />
+            : isSuccess ?
+              <>
+                <form onSubmit={handleSubmit(onSubmit)} className='grid w-full items-center gap-4'>
+                  <div className='grid w-full items-center gap-1.5'>
+                    <Label htmlFor='username'>
+                      Username<sup className='text-red-500 font-bold text-sm'>*</sup>
+                    </Label>
+                    <Input
+                      placeholder='username'
+                      type='text'
+                      disabled={isLoading}
+                      {...register('username')}
+                      className={cn('py-6 focus-visible:ring-0 focus-visible:ring-offset-0', { 'border-red-500': errors?.username })}
+                    />
+                    {errors.username && <span className="text-red-500 text-[12px]">{String(errors?.username?.message)}</span>}
+                  </div>
+                  <div className='grid w-full items-center gap-1.5'>
+                    <Label htmlFor='password'>
+                      Password<sup className='text-red-500 font-bold text-sm'>*</sup>
+                    </Label>
+                    <PasswordInput
+                      disabled={isLoading}
+                      placeholder='password'
+                      {...register('password')}
+                      className={cn('py-6  focus-visible:ring-0 focus-visible:ring-offset-0 ', { 'border-red-500': errors?.password })}
+                    />
+                    {errors.password && <span className="text-red-500 text-[12px]">{String(errors?.password?.message)}</span>}
+                  </div>
+
+                  <Button disabled={isLoading} defaultColor type='submit' className='py-6'>
+                    {isLoading ? (
+                      <>
+                        <Loading title='Registering...' />
+                      </>
+                    ) : 'Register now'}
+                  </Button>
+                </form>
+                <Link href='/sign-in'>
+                  <p className='text-center text-sm mt-4'>
+                    Already have an account? Sign in
+                  </p>
+                </Link>
+              </> : <LoadingVerify />
+          )
+      }
+
+    </AuthLayout>
   )
+
 }
 
 export default RegisterInvitedUserPage;
+
+export const ErrorVerification = ({ title }: { title?: string }) => {
+  return (
+    <div className='flex flex-col items-center justify-center gap-4'>
+      <Image src={ErrorImg} alt="error" width={300} height={300} />
+      <p className='text-center text-lg font-semibold text-dark-1'>
+        {title || ' Invalid or expired link'}
+      </p>
+      <GoBackButton title={'Back to Sign In'} link={'/sign-in'} />
+    </div>
+  )
+}
+export const LoadingVerify = ({ title }: { title?: string }) => {
+  return (
+    <>
+      <h1 className='text-3xl text-center font-bold mb-4'>
+        Please wait a moment
+      </h1>
+      <Loading title={title || 'Verifying your invition link'} />
+    </>
+  )
+}

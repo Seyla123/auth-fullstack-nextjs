@@ -5,6 +5,8 @@ import catchAsync from "@/lib/server/utils/catchAsync";
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "@/app/api/auth/sign-in/route";
 import { createVerificationToken } from "@/lib/server/utils/authUtils";
+import { sendMail } from "@/lib/server/services/EmailService";
+import jwt from "jsonwebtoken";
 
 export const POST = catchAsync(async (req: NextRequest) => {
     const data = await req.json();
@@ -34,6 +36,13 @@ export const POST = catchAsync(async (req: NextRequest) => {
     const { token, hashedToken } = createVerificationToken();
     const expiredDate = new Date(Date.now() + 1000 * 60 * 10); // 10 minutes from now
     const formattedExpiredDate = expiredDate.toISOString().replace('T', ' ').slice(0, 19);
+    const resetToken = jwt.sign({
+        email,
+        passwordResetToken: token
+    },
+        process.env.JWT_SECRET as string, {
+        expiresIn: process.env.JWT_RESET_PASSWORD_TOKEN_EXPIRES_IN || '10min'
+    })
 
     const updateResetToken = db.prepare(`
         UPDATE users SET 
@@ -46,9 +55,17 @@ export const POST = catchAsync(async (req: NextRequest) => {
         throw new AppError('Failed to update reset token for the user.', 400);
     }
 
+    const url = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    const dataSend =
+    {
+        "link": url,
+        "expiredTime": "10 minutes"
+    }
+    await sendMail(email, 5, dataSend)
+
     return NextResponse.json({
         status: 'success',
         message: "Successfully sent reset password to email.",
-        token,
+        resetToken
     }, { status: 200 })
 })

@@ -1,13 +1,14 @@
 "use server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { db } from "@/lib/initDb";
 import { SignupFormSchema } from "@/lib/definitions";
 import bcrypt from "bcryptjs";
 import catchAsync from "@/lib/server/utils/catchAsync";
 import AppError from "@/lib/server/utils/appError";
-import { createVerificationToken } from "@/lib/server/utils/authUtils";
+import { createSendToken, createVerificationToken } from "@/lib/server/utils/authUtils";
 import jwt from "jsonwebtoken";
 import { sendMail } from "@/lib/server/services/EmailService";
+import { User } from "../sign-in/route";
 
 export const POST = catchAsync(async (req: NextRequest) => {
   // Read the request body
@@ -48,7 +49,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
 
     // Get the created user data
     const user = db.prepare("SELECT * FROM users WHERE email = ? ");
-    const createdUser = user.get(email);
+    const createdUser = user.get(email) as User;
 
     const url = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verifyToken}`;
     const data =
@@ -58,12 +59,10 @@ export const POST = catchAsync(async (req: NextRequest) => {
     }
 
     //send email verification token
-    await sendMail(email, 1, data)
-    // Return the newly created user
-    return NextResponse.json(
-      { message: "User created successfully", data: createdUser, token: hashedToken, jwt: verifyToken },
-      { status: 201 }
-    );
+    await sendMail(email, 1, data);
+
+    // Send the token and user data
+    return createSendToken(createdUser, 200, req, "User created successfully");
   } catch (error) {
     if ((error as Error).message.includes("UNIQUE constraint failed")) {
       if ((error as Error).message.includes("users.email")) {

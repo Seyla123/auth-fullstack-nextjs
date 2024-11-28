@@ -8,15 +8,19 @@ interface DefaultResponse {
   data?: User | null;
 }
 
-interface SignoutResponse {
-  message: string,
-  status: string
-}
-
 interface RegisterUserByInviteFormValues {
   token: string | null;
   password: string | null;
   username: string | null;
+}
+
+interface RequestPasswordResetFormValues {
+  email: string;
+}
+
+interface ResetPasswordFormValues {
+  newPassword: string;
+  resetToken: string | null;
 }
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -30,7 +34,6 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Auth'], // Tags for caching and invalidation
     }),
-
     // sign in mutation
     signin: builder.mutation<DefaultResponse, SigninFormValues>({
       query: (user) => ({
@@ -39,10 +42,10 @@ export const authApi = baseApi.injectEndpoints({
         body: user,
         credentials: 'include', // Includes cookies for authentication
       }),
+      invalidatesTags: ['Auth'],
     }),
-
     // sign out mutation
-    signout: builder.mutation<SignoutResponse, void>({
+    signout: builder.mutation<DefaultResponse, void>({
       query: () => ({
         url: '/auth/sign-out', // Adjust the path as needed
         method: 'POST',
@@ -83,6 +86,41 @@ export const authApi = baseApi.injectEndpoints({
         body: user,
         credentials: 'include',
       }),
+    }),
+    // forgot password
+    forgotPassword: builder.mutation<DefaultResponse, RequestPasswordResetFormValues>({
+      query: (email) => ({
+        url: `/auth/forgot-password`,
+        method: 'POST',
+        body: email,
+        credentials: 'include',
+      }),
+    }),
+    // verify reset passsword token
+    verifyResetPassword: builder.mutation<DefaultResponse, string | null>({
+      query: (token) => ({
+        url: `/auth/reset-password`,
+        method: 'GET',
+        params: { token },
+        credentials: 'include',
+      }),
+    }),
+    // reset password
+    resetPassword: builder.mutation<DefaultResponse, ResetPasswordFormValues>({
+      query: (data) => ({
+        url: `/auth/reset-password`,
+        method: 'PATCH',
+        body: data,
+        credentials: 'include',
+      }),
+    }),
+    // resend verification sign up user
+    resendVerificationSignup: builder.mutation<DefaultResponse, void>({
+      query: () => ({
+        url: `/auth/resend-verification`,
+        method: 'POST',
+        credentials: 'include',
+      }),
     })
   }),
   overrideExisting: false, // Set to true if you want to override existing endpoints
@@ -95,5 +133,9 @@ export const {
   useCheckAuthQuery,
   useVerifySignupMutation,
   useVerifyInvitationMutation,
-  useRegisterUserByInviteMutation
+  useRegisterUserByInviteMutation,
+  useForgotPasswordMutation,
+  useVerifyResetPasswordMutation,
+  useResetPasswordMutation,
+  useResendVerificationSignupMutation
 } = authApi;

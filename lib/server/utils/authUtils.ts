@@ -31,6 +31,7 @@ export const createSendToken = async (
     user: User,
     statusCode: number,
     req: NextRequest,
+    message?: string
 ) => {
     try {
         const token = signToken(user.id);
@@ -56,7 +57,7 @@ export const createSendToken = async (
                 emailVerified: user.emailVerified,
                 email: user.email,
             },
-            message: "User signed in successfully",
+            message: message || "User signed in successfully",
         }, { status: statusCode });
     } catch (error) {
         throw new Error(error as string);
@@ -127,7 +128,7 @@ export const uncodedJwtToken = (token: string) => {
             throw new AppError("Invalid token format. Please verify the token and try again.", 400);
         }
         // Generic fallback for other JWT errors
-        throw new AppError("An error occurred during token verification.", 500);
+        throw new AppError("This token is invalid", 500);
     }
 
 }
