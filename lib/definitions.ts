@@ -41,19 +41,29 @@ export const ChangePasswordFormSchema = z.object({
 });
 export type ChangePasswordFormValues = z.infer<typeof ChangePasswordFormSchema>;
 
-// Sign up schema and type
+// Forgot Password schema and type
 export const ForgotPasswordFormSchema = z.object({
   email: emailSchema,
 });
 export type ForgotPasswordFormValues = z.infer<typeof ForgotPasswordFormSchema>;
 
-// Sign up schema and type
+// ResetConfirm Password schema and type
+export const ResetConfirmPasswordFormSchema = z.object({
+  password: passwordSchema,
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Password confirmation does not match password',
+  path: ['confirmPassword'], // Specify which field to attach the error to
+});
+export type ResetConfirmPasswordFormValues = z.infer<typeof ResetConfirmPasswordFormSchema>;
+
+// Reset password schema and type
 export const ResetPasswordFormSchema = z.object({
   newPassword: passwordSchema,
 });
 export type ResetPasswordFormValues = z.infer<typeof ResetPasswordFormSchema>;
 
-// Sign up schema and type
+// Resend Verification schema and type
 export const ResendVerificationFormSchema = z.object({
   email: emailSchema,
 });

@@ -22,7 +22,7 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addMatcher(authApi.endpoints.signout.matchFulfilled, (state, { payload }) => {
+    builder.addMatcher(authApi.endpoints.signout.matchFulfilled, (state) => {
       state.isAuthenticated = false;
       state.user = null;
     });

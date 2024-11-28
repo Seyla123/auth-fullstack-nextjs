@@ -51,17 +51,17 @@ export const POST = catchAsync(async (req: NextRequest) => {
     if (!user) {
         throw new AppError("No user found with this email address", 404);
     };
+    // Verify the password
+    const isValid = await correctPassword(password, user.password);
 
     // Check if the old password is correct
-    if (user.oldPassword) {
+    if (user.oldPassword && !isValid) {
         const isOldPasswordValid = await correctPassword(password, user.oldPassword);
         if (isOldPasswordValid) {
             throw new AppError("This is old password, please input new password", 401);
         }
     }
 
-    // Verify the password
-    const isValid = await correctPassword(password, user.password);
     if (!isValid) {
         throw new AppError("Password is incorrect", 401);
     };
@@ -69,10 +69,6 @@ export const POST = catchAsync(async (req: NextRequest) => {
     // Check if the user is active
     if (user.active !== 'true') {
         throw new AppError("Your account is currently deactivated. Please reach out to support.", 401);
-    }
-    // Check if the user is verified
-    if (user.emailVerified !== 'true') {
-        throw new AppError("Email verification is pending. Check your inbox for the verification link.", 401);
     }
 
     // Send the token and user data

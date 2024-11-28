@@ -1,5 +1,5 @@
 import { User } from "@/app/api/auth/sign-in/route";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from "next/server";
 import crypto from 'crypto';
@@ -12,25 +12,26 @@ export type invitedUser = {
     role: string;
     inviteToken: string;
     expiredAt: string;
-    status: string;
+    status: 'pending' | 'accepted' | 'expired';
     createdAt: string;
     invitedByEmail?: string;
     invitedByUsername?: string;
     invitedBy?: number | string;
 }
 
-const correctPassword = async (candidatePassword: string, hash: string) => {
+export const correctPassword = async (candidatePassword: string, hash: string) => {
     return await bcrypt.compare(candidatePassword, hash);
 };
-const signToken = (id: string | number): string =>
+export const signToken = (id: string | number): string =>
     jwt.sign({ id }, process.env.JWT_SECRET as string, {
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-const createSendToken = async (
+export const createSendToken = async (
     user: User,
     statusCode: number,
     req: NextRequest,
+    message?: string
 ) => {
     try {
         const token = signToken(user.id);
@@ -56,14 +57,14 @@ const createSendToken = async (
                 emailVerified: user.emailVerified,
                 email: user.email,
             },
-            message: "User signed in successfully",
+            message: message || "User signed in successfully",
         }, { status: statusCode });
     } catch (error) {
         throw new Error(error as string);
     }
 };
 
-const createVerificationToken = () => {
+export const createVerificationToken = () => {
     const token = crypto.randomBytes(32).toString('hex');
     const hashedToken = crypto
         .createHash('sha256')
@@ -72,7 +73,7 @@ const createVerificationToken = () => {
 
     return { token, hashedToken };
 }
-const hashedToken = (token: string) => {
+export const hashedToken = (token: string) => {
     return crypto
         .createHash('sha256')
         .update(token)
@@ -86,7 +87,7 @@ export const verifyInvite = async (token: string) => {
 
     const invitedUser = db.prepare('SELECT * FROM invites WHERE inviteToken = ?').get(hashedToken) as invitedUser;
     if (!invitedUser) {
-        throw new AppError("User not found", 404);
+        throw new AppError("Invalid Token", 404);
     }
 
     // SQLite database has default datetime , so it will be wrong with our current datetime
@@ -112,6 +113,23 @@ export const verifyInvite = async (token: string) => {
     return invitedUser;
 };
 
+export const uncodedJwtToken = (token: string) => {
+    let decoded: JwtPayload;
+    try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+        return decoded;
+    } catch (err) {
 
-export { signToken, createSendToken, createVerificationToken, correctPassword , hashedToken } ;
+        // Handle specific JWT errors
+        if ((err as Error).name === "TokenExpiredError") {
+            throw new AppError("Token has expired. Please request a new verification email.", 401);
+        }
+        if ((err as Error).name === "JsonWebTokenError") {
+            throw new AppError("Invalid token format. Please verify the token and try again.", 400);
+        }
+        // Generic fallback for other JWT errors
+        throw new AppError("This token is invalid", 500);
+    }
+
+}
 

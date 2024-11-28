@@ -15,7 +15,7 @@ export interface DeleteUserResponse {
 
 export const userApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        // Signup mutation
+        // get all users
         getAllUsers: builder.query<DefaultResponse, void>({
             query: () => ({
                 url: '/admin/users', // Adjust the path as needed
@@ -24,6 +24,7 @@ export const userApi = baseApi.injectEndpoints({
             }),
             providesTags: ['Users'], // Tags for caching 
         }),
+        //delete user
         deleteUser: builder.mutation<DeleteUserResponse, string | number>({
             query: (id) => ({
                 url: `/admin/users/${id}`,

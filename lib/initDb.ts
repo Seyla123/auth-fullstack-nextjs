@@ -32,8 +32,8 @@ export const initDb = async () => {
       updatedAt DATETIME
     )
   `);
-  const dropTableInvite = db.prepare('DROP TABLE IF EXISTS invites');
-  const dropTableUsers = db.prepare('DROP TABLE IF EXISTS users');
+  // const dropTableInvite = db.prepare('DROP TABLE IF EXISTS invites');
+  // const dropTableUsers = db.prepare('DROP TABLE IF EXISTS users');
   const createInvitesTable = db.prepare(`
     CREATE TABLE IF NOT EXISTS invites (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

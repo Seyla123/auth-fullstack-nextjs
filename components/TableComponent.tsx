@@ -22,7 +22,9 @@ export const TableComponent = ({
   onDelete,
   onEdit,
   onView,
-  onManyDelete
+  onManyDelete,
+  onResendInvite,
+  tableType
 }: {
   header: string[];
   dataColumn: string[];
@@ -32,6 +34,8 @@ export const TableComponent = ({
   onEdit?: (id: string) => void;
   onView?: (id: string) => void;
   onManyDelete?: (ids: string[]) => void;
+  onResendInvite?: (id: string) => void;
+  tableType?: string | null;
 }) => {
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
 
@@ -116,14 +120,23 @@ export const TableComponent = ({
                     />
                   </TableCell>
                   {dataColumn?.map((item, index) => {
-                    return <TableCell key={index}>{(user as Record<string, any>)[item]}</TableCell>;
+                    return <TableCell key={index}>{(user as Record<string, string>)[item]}</TableCell>;
                   })}
                   <TableCell>
-                    <DropdownAction
-                      handleEdit={() => handleEdit(String(user?.id))}
-                      handleDelete={() => handleDelete(String(user?.id))}
-                      handleView={() => handleView(String(user?.id))}
-                    />
+                    {(tableType == 'invitedUser' && (user as invitedUser)?.status !== 'accepted' && onResendInvite) ?
+                      <DropdownAction
+                        handleEdit={() => handleEdit(String(user?.id))}
+                        handleDelete={() => handleDelete(String(user?.id))}
+                        handleView={() => handleView(String(user?.id))}
+                        handleResendInvite={() => onResendInvite(String(user?.id))}
+                      />
+                      :
+                      <DropdownAction
+                        handleEdit={() => handleEdit(String(user?.id))}
+                        handleDelete={() => handleDelete(String(user?.id))}
+                        handleView={() => handleView(String(user?.id))}
+                      />
+                    }
                   </TableCell>
                 </TableRow>
               );

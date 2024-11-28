@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
-import jwt, { JwtPayload } from "jsonwebtoken"; // Install with `npm install jsonwebtoken`
+import { JwtPayload } from "jsonwebtoken"; // Install with `npm install jsonwebtoken`
 import { db } from "@/lib/initDb";
 import AppError from "@/lib/server/utils/appError";
+import { uncodedJwtToken } from "@/lib/server/utils/authUtils";
 
 export const protect = (req: NextRequest) => {
   let token;
@@ -22,7 +23,7 @@ export const protect = (req: NextRequest) => {
 
 
   // 3. Verify token
-  const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+  const decoded = uncodedJwtToken(token) as JwtPayload;
   if (!decoded) throw new AppError("Invalid or expired token", 401)
 
   // If token is valid, attach user info to the request
