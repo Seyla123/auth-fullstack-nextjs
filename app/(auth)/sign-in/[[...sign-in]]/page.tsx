@@ -34,7 +34,7 @@ function Signin() {
       const response = await signin(data).unwrap();
       toast({
         title: 'Success',
-        description: 'You have been successfully signed up!',
+        description: 'You have been successfully signed in!',
       })
 
       if (response?.data?.role == 'admin') {
@@ -46,7 +46,7 @@ function Signin() {
       const errorData = error as ErrorDataType;
       toast({
         title: 'Error',
-        description: errorData?.data?.message || 'Failed to sign up',
+        description: errorData?.data?.message || 'Failed to sign in',
         variant: 'destructive',
       })
     }

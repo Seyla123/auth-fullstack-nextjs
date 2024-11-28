@@ -15,10 +15,12 @@ import { ErrorDataType } from '../../sign-in/[[...sign-in]]/page'
 import Link from 'next/link'
 import { PasswordInput } from '@/components/ui/password-input'
 import { AuthLayout } from '@/components/AuthLayout'
+import { useRouter } from 'next/navigation'
 
 function Signup() {
-  const { toast } = useToast()
-  const [signup, { isLoading }] = useSignupMutation()
+  const router = useRouter();
+  const { toast } = useToast();
+  const [signup, { isLoading }] = useSignupMutation();
 
   const {
     register,
@@ -31,11 +33,17 @@ function Signup() {
   const onSubmit = async (data: SignupFormValues) => {
     try {
       // Call the signup mutation from authApi
-      await signup(data).unwrap(); // unwrap to get the response directly
+      const response = await signup(data).unwrap(); // unwrap to get the response directly
       toast({
         title: 'Success',
         description: 'You have been successfully signed up!',
       });
+      if (response?.data?.role == 'admin') {
+        router.push('/admin/users');
+      } else {
+        router.push('/users');
+      }
+
     } catch (error) {
       const errorData = error as ErrorDataType;
       // Handle the error case

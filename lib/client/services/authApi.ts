@@ -43,6 +43,7 @@ export const authApi = baseApi.injectEndpoints({
         body: user,
         credentials: 'include', // Includes cookies for authentication
       }),
+      invalidatesTags: ['Auth'],
     }),
 
     // sign out mutation

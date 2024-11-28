@@ -24,7 +24,7 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
         if (isSuccess || error) {
             console.log('this login user : ', user);
             if (user?.emailVerified !== "true") {
-                router.push('/verify-email');
+                router.push('/verify-account');
                 return;
             }
             // If user is not authenticated, protect the routes

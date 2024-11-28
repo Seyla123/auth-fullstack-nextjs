@@ -31,6 +31,7 @@ export const createSendToken = async (
     user: User,
     statusCode: number,
     req: NextRequest,
+    message?: string
 ) => {
     try {
         const token = signToken(user.id);
@@ -56,7 +57,7 @@ export const createSendToken = async (
                 emailVerified: user.emailVerified,
                 email: user.email,
             },
-            message: "User signed in successfully",
+            message: message || "User signed in successfully",
         }, { status: statusCode });
     } catch (error) {
         throw new Error(error as string);
