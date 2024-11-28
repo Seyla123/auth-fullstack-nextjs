@@ -26,6 +26,6 @@ jobs:
       - name: Deploy to Netlify
         id: netlify_deploy
         run: |
-         deploy --dir=out --prod --auth=${{ secrets.NETLIFY_AUTH_TOKEN }} --site=${{ secrets.NETLIFY_SITE_ID }}
+         Netlify deploy --dir=out --prod --auth=${{ secrets.NETLIFY_AUTH_TOKEN }} --site=${{ secrets.NETLIFY_SITE_ID }}
 
 
