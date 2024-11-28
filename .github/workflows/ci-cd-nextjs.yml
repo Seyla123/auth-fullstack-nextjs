@@ -23,8 +23,6 @@ jobs:
         run: npm ci
       - name: Build project
         run: npm run build
-      - name: Netlify Login
-        run: netlify login --token ${{ secrets.NETLIFY_AUTH_TOKEN }}
       - name: Deploy to Netlify
         id: netlify_deploy
         run: |
