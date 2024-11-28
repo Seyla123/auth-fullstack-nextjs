@@ -1,0 +1,32 @@
+name: CI/CD for Next.js
+
+on:
+  push:
+    branches:
+      - main  # Adjust the branch as needed
+      - feature/add-pipeline
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code from the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js container with Alpine
+      - name: Set up Node.js container
+        uses: docker://node:20-alpine  # Using Node.js 20 with Alpine
+        with:
+          args: |
+            sh -c '
+            npm install &&
+            npm run build
+            '
+
+      # Step 3: Deploy to Netlify
+      - name: Deploy to Netlify
+        uses: netlify/actions/cli@v1
+        with:
+          args: deploy --dir=out --prod --auth=${{ secrets.NETLIFY_AUTH_TOKEN }} --site=${{ secrets.NETLIFY_SITE_ID }}
