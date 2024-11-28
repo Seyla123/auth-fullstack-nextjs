@@ -61,7 +61,7 @@ export const POST = catchAsync(async (req: NextRequest) => {
       `);
     stmt.run(hashedToken, formattedExpiredDate, currentDate, userRequestTime + 1, email);
 
-    const url = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/auth/verify-email?token=${verifyToken}`;
+    const url = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verifyToken}`;
     const dataSend =
     {
         "verify_link": url,
